@@ -138,8 +138,13 @@
 }
 
 /* 多选模式下「继续编辑」置灰且不可点 */
+.draft-box__new.btn--glass,
+.draft-box__continue.btn--glass {
+  font-weight: 500;
+}
+
 .draft-box__edit-btn--disabled,
-.draft-box__item-actions .btn--primary:disabled {
+.draft-box__item-actions .btn--glass:disabled {
   background: #e8e6e3 !important;
   border: 1px solid #d4d1cc !important;
   color: #9a9691 !important;

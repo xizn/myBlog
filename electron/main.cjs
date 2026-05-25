@@ -60,6 +60,16 @@ function registerStorageIpc() {
   });
 }
 
+function registerShellIpc() {
+  ipcMain.handle('shell:open-external', async (_event, url) => {
+    if (typeof url !== 'string' || !/^https?:\/\//i.test(url)) {
+      return { ok: false, error: '无效的链接' };
+    }
+    await shell.openExternal(url);
+    return { ok: true };
+  });
+}
+
 function registerAiIpc() {
   ipcMain.handle('ai:fetch', async (_event, { url, method, headers, body }) => {
     try {
@@ -181,8 +191,30 @@ function createWindow() {
 
   mainWindow.loadURL(appUrl);
 
+  const appOrigin = new URL(appUrl).origin;
+  const isAppUrl = (url) => {
+    try {
+      return new URL(url).origin === appOrigin;
+    } catch {
+      return false;
+    }
+  };
+
+  const blockExternalNavigation = (event, url) => {
+    if (isAppUrl(url)) return;
+    event.preventDefault();
+    if (/^https?:\/\//i.test(url)) {
+      void shell.openExternal(url);
+    }
+  };
+
+  mainWindow.webContents.on('will-navigate', blockExternalNavigation);
+  mainWindow.webContents.on('will-redirect', blockExternalNavigation);
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    if (/^https?:\/\//i.test(url)) {
+      void shell.openExternal(url);
+    }
     return { action: 'deny' };
   });
 
@@ -205,6 +237,7 @@ if (!gotLock) {
   app.whenReady().then(async () => {
     try {
       registerStorageIpc();
+      registerShellIpc();
       registerAiIpc();
       await startServer();
       createWindow();

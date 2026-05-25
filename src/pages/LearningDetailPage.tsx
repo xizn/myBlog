@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteLearning, updateLearning } from '@/api/learning';
 import { useLearning } from '@/hooks/useLearnings';
 import { FormFlagToggle } from '@/components/form/FormFlagToggle';
@@ -21,6 +21,7 @@ import './LearningDetailPage.css';
 export function LearningDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { item, loading, setItem } = useLearning(id, { recordRead: true });
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -85,7 +86,7 @@ export function LearningDetailPage() {
             blocks={learningToExportBlocks(item)}
             disabled={deleting}
           />
-          <Link to={`/learning/${id}/edit`}>
+          <Link to={`/learning/${id}/edit`} state={{ returnTo: location.pathname }}>
             <Button variant="outline">编辑</Button>
           </Link>
           <Button variant="outline" className="btn--danger-outline" onClick={() => setConfirmOpen(true)}>

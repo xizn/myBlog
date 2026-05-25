@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteAgent, updateAgent } from '@/api/agents';
 import { useAgent } from '@/hooks/useAgents';
 import { FormFlagToggle } from '@/components/form/FormFlagToggle';
@@ -24,6 +24,7 @@ import './AgentDetailPage.css';
 export function AgentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { item, loading, setItem } = useAgent(id, { recordRead: true });
   const preview = usePreview();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -96,7 +97,7 @@ export function AgentDetailPage() {
             blocks={agentToExportBlocks(item)}
             disabled={deleting}
           />
-          <Link to={`/agents/${id}/edit`}>
+          <Link to={`/agents/${id}/edit`} state={{ returnTo: location.pathname }}>
             <Button variant="outline">编辑</Button>
           </Link>
           <Button variant="outline" className="btn--danger-outline" onClick={() => setConfirmOpen(true)}>

@@ -12,6 +12,7 @@ import {
 import type { AgentDraftRecord } from '@/types/agentDraft';
 import type { FormOperation } from '@/types/formLog';
 import { hasAgentDraftContent } from '@/utils/agentDraftContent';
+import { useEditorReturnTo } from '@/utils/editorReturnTo';
 import {
   AgentForm,
   agentFormToInput,
@@ -189,16 +190,14 @@ export function AgentDraftPanel({ draftId, active }: AgentDraftPanelProps) {
     [draftId, refreshOps, updateTabDraftStatus]
   );
 
+  const returnTo = useEditorReturnTo('/agents');
+
   const handleCancel = useCallback(() => {
     recordLeaveWithoutSave();
-    const current = getAgentDraft(draftId);
-    const backTo = current?.agentId ? `/agents/${current.agentId}` : '/agents';
-    navigate(backTo);
-  }, [draftId, navigate, recordLeaveWithoutSave]);
+    navigate(returnTo);
+  }, [navigate, recordLeaveWithoutSave, returnTo]);
 
   if (!record) return null;
-
-  const backTo = record.agentId ? `/agents/${record.agentId}` : '/agents';
 
   return (
     <div
@@ -207,7 +206,7 @@ export function AgentDraftPanel({ draftId, active }: AgentDraftPanelProps) {
     >
       <FormWorkspace
         hideHeader
-        backTo={backTo}
+        backTo={returnTo}
         draftTitle={sidebarTitle}
         draftSummary={sidebarSummary}
         draftSavedAt={draftSavedAt ?? record.updatedAt}

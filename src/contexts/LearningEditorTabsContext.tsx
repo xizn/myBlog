@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useMatch, useNavigate } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { editorReturnState, resolveReturnTo } from '@/utils/editorReturnTo';
 import {
   createLearningDraft,
   getLearningDraft,
@@ -42,6 +43,7 @@ const LearningEditorTabsContext = createContext<LearningEditorTabsContextValue |
 
 export function LearningEditorTabsProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const match = useMatch('/learning/draft/:draftId');
   const routeDraftId = match?.params.draftId ?? null;
 
@@ -92,16 +94,21 @@ export function LearningEditorTabsProvider({ children }: { children: ReactNode }
     );
   }, []);
 
+  const editorNavState = useCallback(
+    () => editorReturnState(resolveReturnTo(location.state, '/learning')),
+    [location.state]
+  );
+
   const selectTab = useCallback(
     (draftId: string) => {
       setActiveDraftId(draftId);
       ensureTab(draftId);
       const path = getLearningDraftPath(draftId);
       if (routeDraftId !== draftId) {
-        navigate(path);
+        navigate(path, { state: editorNavState() });
       }
     },
-    [ensureTab, navigate, routeDraftId]
+    [ensureTab, editorNavState, navigate, routeDraftId]
   );
 
   const closeTab = useCallback(
@@ -112,16 +119,19 @@ export function LearningEditorTabsProvider({ children }: { children: ReactNode }
           if (draftId !== current) return current;
           const fallback = next[0]?.draftId ?? null;
           if (fallback) {
-            navigate(getLearningDraftPath(fallback), { replace: true });
+            navigate(getLearningDraftPath(fallback), {
+              replace: true,
+              state: editorNavState(),
+            });
           } else {
-            navigate('/learning', { replace: true });
+            navigate(resolveReturnTo(location.state, '/learning'), { replace: true });
           }
           return fallback;
         });
         return next;
       });
     },
-    [navigate]
+    [editorNavState, location.state, navigate]
   );
 
   const removeTab = useCallback((draftId: string) => {
@@ -151,8 +161,8 @@ export function LearningEditorTabsProvider({ children }: { children: ReactNode }
     } catch {
       /* ignore */
     }
-    navigate(getLearningDraftPath(draft.draftId));
-  }, [navigate]);
+    navigate(getLearningDraftPath(draft.draftId), { state: editorNavState() });
+  }, [editorNavState, navigate]);
 
   const openNewDraftWithGuard = useCallback(() => {
     try {
@@ -164,7 +174,12 @@ export function LearningEditorTabsProvider({ children }: { children: ReactNode }
           if (existing && !existing.learningId) {
             setActiveDraftId(draftId);
             ensureTab(draftId, existing.title);
-            navigate(getLearningDraftPath(draftId), { replace: true });
+            navigate(getLearningDraftPath(draftId), {
+              replace: true,
+              state: editorReturnState(
+                resolveReturnTo(location.state, '/learning')
+              ),
+            });
             return;
           }
         }
@@ -174,7 +189,7 @@ export function LearningEditorTabsProvider({ children }: { children: ReactNode }
     }
     sessionStorage.removeItem(NEW_LEARNING_REDIRECT_KEY);
     openNewDraft();
-  }, [ensureTab, navigate, openNewDraft]);
+  }, [ensureTab, location.state, navigate, openNewDraft]);
 
   const value = useMemo(
     () => ({

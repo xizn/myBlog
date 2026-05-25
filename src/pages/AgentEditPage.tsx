@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { editorReturnState, resolveReturnTo } from '@/utils/editorReturnTo';
 import { ensureAgentEditDraft } from '@/api/agentDrafts';
 import { useAgent } from '@/hooks/useAgents';
 import { toAgentFormValues } from '@/components/form/AgentForm';
@@ -8,13 +9,18 @@ import { toAgentFormValues } from '@/components/form/AgentForm';
 export function AgentEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { item, loading } = useAgent(id);
 
   useEffect(() => {
     if (!item || !id) return;
     const draft = ensureAgentEditDraft(id, toAgentFormValues(item));
-    navigate(`/agents/draft/${draft.draftId}`, { replace: true });
-  }, [item, id, navigate]);
+    const returnTo = resolveReturnTo(location.state, id ? `/agents/${id}` : '/agents');
+    navigate(`/agents/draft/${draft.draftId}`, {
+      replace: true,
+      state: editorReturnState(returnTo),
+    });
+  }, [item, id, location.state, navigate]);
 
   if (loading) return <p className="page-loading">加载中…</p>;
   if (!item) {

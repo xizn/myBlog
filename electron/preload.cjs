@@ -11,3 +11,7 @@ contextBridge.exposeInMainWorld('studioFileStorage', {
 contextBridge.exposeInMainWorld('studioAiFetch', (options) =>
   ipcRenderer.invoke('ai:fetch', options)
 );
+
+contextBridge.exposeInMainWorld('studioShell', {
+  openExternal: (url) => ipcRenderer.invoke('shell:open-external', url),
+});

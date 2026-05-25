@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { currentReturnPath, editorReturnState } from '@/utils/editorReturnTo';
 import { deleteAgentDrafts, getAgentDraftPath, listAgentDrafts } from '@/api/agentDrafts';
 import { DraftBoxPanel } from '@/components/common/DraftBoxPanel';
 import { formatOpTime } from '@/utils/formDraft';
@@ -7,6 +8,8 @@ import { formatOpTime } from '@/utils/formDraft';
 /** Agent 草稿箱管理 */
 export function DraftBox() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = currentReturnPath(location);
   const [drafts, setDrafts] = useState(() => listAgentDrafts());
 
   const refresh = () => setDrafts(listAgentDrafts());
@@ -24,8 +27,14 @@ export function DraftBox() {
       newButtonLabel="+ 新建草稿"
       emptyMessage="暂无草稿，点击「新建草稿」开始编写"
       items={items}
-      onNew={() => navigate('/agents/new')}
-      onEdit={(draftId) => navigate(getAgentDraftPath(draftId))}
+      onNew={() =>
+        navigate('/agents/new', { state: editorReturnState(returnTo) })
+      }
+      onEdit={(draftId) =>
+        navigate(getAgentDraftPath(draftId), {
+          state: editorReturnState(returnTo),
+        })
+      }
       onDelete={(draftIds) => {
         const deleted = deleteAgentDrafts(draftIds);
         refresh();

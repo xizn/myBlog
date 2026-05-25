@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLearnings } from '@/hooks/useLearnings';
 import { LearningCard } from '@/components/learning/LearningCard';
 import { Tag } from '@/components/common/Tag';
@@ -9,11 +9,14 @@ import { filterByKeyword, getLearningSearchText } from '@/utils/filterByKeyword'
 import { Button } from '@/components/common/Button';
 import { ListSearch } from '@/components/common/ListSearch';
 import { LearningDraftBox } from '@/components/learning/LearningDraftBox';
+import { currentReturnPath, editorReturnState } from '@/utils/editorReturnTo';
 import '@/components/common/PageActions.css';
 import './LearningPage.css';
 
 /** 学习记录列表页 */
 export function LearningPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { items, loading } = useLearnings();
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -33,9 +36,17 @@ export function LearningPage() {
           <h1 className="page-header__title">学习记录</h1>
           <p className="page-header__desc">技术笔记、实践总结与 Agent 开发心得。</p>
         </div>
-        <Link to="/learning/new">
-          <Button variant="primary">+ 新建笔记</Button>
-        </Link>
+        <Button
+          variant="glass"
+          className="page-header__cta"
+          onClick={() =>
+            navigate('/learning/new', {
+              state: editorReturnState(currentReturnPath(location)),
+            })
+          }
+        >
+          + 新建笔记
+        </Button>
       </header>
 
       <LearningDraftBox />

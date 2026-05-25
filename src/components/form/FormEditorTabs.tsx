@@ -84,7 +84,7 @@ export function FormEditorTabs({
           {historyLabel}
         </Button>
       )}
-      <Button type="button" variant="outline" className="form-editor-tabs__new" onClick={onNew}>
+      <Button type="button" variant="glass" className="form-editor-tabs__new" onClick={onNew}>
         {newLabel}
       </Button>
     </div>

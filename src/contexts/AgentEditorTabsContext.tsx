@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useMatch, useNavigate } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { editorReturnState, resolveReturnTo } from '@/utils/editorReturnTo';
 import {
   createAgentDraft,
   getAgentDraft,
@@ -43,6 +44,7 @@ const AgentEditorTabsContext = createContext<AgentEditorTabsContextValue | null>
 
 export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const match = useMatch('/agents/draft/:draftId');
   const routeDraftId = match?.params.draftId ?? null;
 
@@ -94,16 +96,21 @@ export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const editorNavState = useCallback(
+    () => editorReturnState(resolveReturnTo(location.state, '/agents')),
+    [location.state]
+  );
+
   const selectTab = useCallback(
     (draftId: string) => {
       setActiveDraftId(draftId);
       ensureTab(draftId);
       const path = getAgentDraftPath(draftId);
       if (routeDraftId !== draftId) {
-        navigate(path);
+        navigate(path, { state: editorNavState() });
       }
     },
-    [ensureTab, navigate, routeDraftId]
+    [ensureTab, editorNavState, navigate, routeDraftId]
   );
 
   const closeTab = useCallback(
@@ -114,16 +121,19 @@ export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
           if (draftId !== current) return current;
           const fallback = next[0]?.draftId ?? null;
           if (fallback) {
-            navigate(getAgentDraftPath(fallback), { replace: true });
+            navigate(getAgentDraftPath(fallback), {
+              replace: true,
+              state: editorNavState(),
+            });
           } else {
-            navigate('/agents', { replace: true });
+            navigate(resolveReturnTo(location.state, '/agents'), { replace: true });
           }
           return fallback;
         });
         return next;
       });
     },
-    [navigate]
+    [editorNavState, location.state, navigate]
   );
 
   const removeTab = useCallback((draftId: string) => {
@@ -153,8 +163,8 @@ export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore */
     }
-    navigate(getAgentDraftPath(draft.draftId));
-  }, [navigate]);
+    navigate(getAgentDraftPath(draft.draftId), { state: editorNavState() });
+  }, [editorNavState, navigate]);
 
   const openNewDraftWithGuard = useCallback(() => {
     try {
@@ -166,7 +176,10 @@ export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
           if (existing && !existing.agentId) {
             setActiveDraftId(draftId);
             ensureTab(draftId, existing.title);
-            navigate(getAgentDraftPath(draftId), { replace: true });
+            navigate(getAgentDraftPath(draftId), {
+              replace: true,
+              state: editorReturnState(resolveReturnTo(location.state, '/agents')),
+            });
             return;
           }
         }
@@ -176,7 +189,7 @@ export function AgentEditorTabsProvider({ children }: { children: ReactNode }) {
     }
     sessionStorage.removeItem(NEW_AGENT_REDIRECT_KEY);
     openNewDraft();
-  }, [ensureTab, navigate, openNewDraft]);
+  }, [ensureTab, location.state, navigate, openNewDraft]);
 
   const value = useMemo(
     () => ({

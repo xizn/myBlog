@@ -21,6 +21,7 @@ import { FormWorkspace } from '@/components/form/FormWorkspace';
 import { ScrollNavButtons } from '@/components/form/ScrollNavButtons';
 import { useLearningEditorTabs } from '@/contexts/LearningEditorTabsContext';
 import { hasLearningDraftContent } from '@/utils/learningDraftContent';
+import { useEditorReturnTo } from '@/utils/editorReturnTo';
 
 interface LearningDraftPanelProps {
   draftId: string;
@@ -191,16 +192,14 @@ export function LearningDraftPanel({ draftId, active }: LearningDraftPanelProps)
     [draftId, refreshOps, updateTabDraftStatus]
   );
 
+  const returnTo = useEditorReturnTo('/learning');
+
   const handleCancel = useCallback(() => {
     recordLeaveWithoutSave();
-    const current = getLearningDraft(draftId);
-    const backTo = current?.learningId ? `/learning/${current.learningId}` : '/learning';
-    navigate(backTo);
-  }, [draftId, navigate, recordLeaveWithoutSave]);
+    navigate(returnTo);
+  }, [navigate, recordLeaveWithoutSave, returnTo]);
 
   if (!record) return null;
-
-  const backTo = record.learningId ? `/learning/${record.learningId}` : '/learning';
 
   return (
     <div
@@ -209,7 +208,7 @@ export function LearningDraftPanel({ draftId, active }: LearningDraftPanelProps)
     >
       <FormWorkspace
         hideHeader
-        backTo={backTo}
+        backTo={returnTo}
         draftTitle={sidebarTitle}
         draftSummary={sidebarSummary}
         draftSavedAt={draftSavedAt ?? record.updatedAt}

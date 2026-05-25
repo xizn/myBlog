@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgents } from '@/hooks/useAgents';
 import { usePreview } from '@/hooks/usePreview';
 import { AgentCard } from '@/components/agent/AgentCard';
@@ -11,11 +11,14 @@ import { filterByTag, extractTags } from '@/utils/filterByTag';
 import { filterByKeyword, getAgentSearchText } from '@/utils/filterByKeyword';
 import { Button } from '@/components/common/Button';
 import { ListSearch } from '@/components/common/ListSearch';
+import { currentReturnPath, editorReturnState } from '@/utils/editorReturnTo';
 import '@/components/common/PageActions.css';
 import './AgentsPage.css';
 
 /** Agent 项目列表页 */
 export function AgentsPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { items, loading } = useAgents();
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -36,9 +39,17 @@ export function AgentsPage() {
           <h1 className="page-header__title">Agent 项目</h1>
           <p className="page-header__desc">实验性 Agent 与自动化工作流，支持在线预览演示。</p>
         </div>
-        <Link to="/agents/new">
-          <Button variant="primary">+ 新建项目</Button>
-        </Link>
+        <Button
+          variant="glass"
+          className="page-header__cta"
+          onClick={() =>
+            navigate('/agents/new', {
+              state: editorReturnState(currentReturnPath(location)),
+            })
+          }
+        >
+          + 新建项目
+        </Button>
       </header>
 
       <DraftBox />

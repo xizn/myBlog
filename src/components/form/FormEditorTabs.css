@@ -98,25 +98,9 @@ html[data-theme-bg-tone='dark'] .form-editor-tab__close:hover {
 }
 
 .form-editor-tabs__history.btn--ghost,
-.form-editor-tabs__new.btn--outline {
-  color: var(--text);
-  border-color: var(--border-hover);
-}
-
-html[data-theme-bg-image='1'] .form-editor-tabs__new.btn--outline {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-html[data-theme-bg-tone='dark'] .form-editor-tabs__new.btn--outline {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f5f4f0;
-  border-color: rgba(255, 255, 255, 0.24);
-}
-
-html[data-theme-bg-tone='dark'] .form-editor-tabs__new.btn--outline:hover {
-  color: #faf9f7;
-  border-color: rgba(255, 255, 255, 0.36);
-  background: rgba(255, 255, 255, 0.14);
+.form-editor-tabs__new.btn--glass {
+  color: var(--btn-glass-text);
+  border-color: var(--btn-glass-border);
 }
 
 html[data-theme-bg-tone='dark'] .form-editor-tabs__history.btn--ghost {

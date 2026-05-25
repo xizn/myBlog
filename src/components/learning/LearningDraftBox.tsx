@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { currentReturnPath, editorReturnState } from '@/utils/editorReturnTo';
 import {
   deleteLearningDrafts,
   getLearningDraftPath,
@@ -11,6 +12,8 @@ import { formatOpTime } from '@/utils/formDraft';
 /** 学习笔记草稿箱 */
 export function LearningDraftBox() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = currentReturnPath(location);
   const [drafts, setDrafts] = useState(() => listLearningDrafts());
 
   const refresh = () => setDrafts(listLearningDrafts());
@@ -28,8 +31,14 @@ export function LearningDraftBox() {
       newButtonLabel="+ 新建笔记"
       emptyMessage="暂无草稿，点击「新建笔记」开始编写"
       items={items}
-      onNew={() => navigate('/learning/new')}
-      onEdit={(draftId) => navigate(getLearningDraftPath(draftId))}
+      onNew={() =>
+        navigate('/learning/new', { state: editorReturnState(returnTo) })
+      }
+      onEdit={(draftId) =>
+        navigate(getLearningDraftPath(draftId), {
+          state: editorReturnState(returnTo),
+        })
+      }
       onDelete={(draftIds) => {
         const deleted = deleteLearningDrafts(draftIds);
         refresh();

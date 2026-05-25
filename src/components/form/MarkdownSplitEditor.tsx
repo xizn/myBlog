@@ -18,10 +18,12 @@ import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
 import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import { mountCherryNoteLinkButton } from '@/utils/cherryNoteLinkButton';
+import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
 import {
   findTextMatches,
   offsetToLineCol,
 } from '@/utils/markdownEditorNav';
+import { openExternalLink } from '@/utils/openExternalLink';
 import './MarkdownSplitEditor.css';
 import './CherryMarkdownEditor.css';
 
@@ -241,18 +243,16 @@ export function MarkdownSplitEditor({
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
       if (anchor?.href) {
-        try {
-          const url = new URL(anchor.href, window.location.origin);
-          const internal =
-            url.origin === window.location.origin &&
-            (/^\/learning\/[^/]+$/.test(url.pathname) || /^\/agents\/[^/]+$/.test(url.pathname));
-          if (internal) {
-            e.preventDefault();
-            navigate(url.pathname);
-            return;
-          }
-        } catch {
-          /* ignore malformed href */
+        const resolved = resolveAppLink(anchor.href);
+        if (resolved?.kind === 'internal') {
+          e.preventDefault();
+          navigate(internalLinkTo(resolved.pathname, resolved.search, resolved.hash));
+          return;
+        }
+        if (resolved?.kind === 'external') {
+          e.preventDefault();
+          openExternalLink(resolved.url);
+          return;
         }
       }
 
@@ -261,13 +261,13 @@ export function MarkdownSplitEditor({
       setZoomImage({ src: img.src, alt: img.alt || '预览图片' });
     };
 
-    preview.addEventListener('click', onPreviewClick);
+    preview.addEventListener('click', onPreviewClick, true);
     const imgs = preview.querySelectorAll('img');
     imgs.forEach((img) => {
       img.style.cursor = 'zoom-in';
     });
 
-    return () => preview.removeEventListener('click', onPreviewClick);
+    return () => preview.removeEventListener('click', onPreviewClick, true);
   }, [ready, editorId, value, navigate]);
 
   const applyAiMarkdown = (markdown: string) => {

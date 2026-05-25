@@ -15,6 +15,7 @@ import { usePageHeader } from '@/contexts/PageHeaderContext';
 import { useAsyncDialogPhase } from '@/hooks/useAsyncDialogPhase';
 import type { AgentProject } from '@/types';
 import { formatOpTime } from '@/utils/formDraft';
+import { useEditorReturnTo } from '@/utils/editorReturnTo';
 import '@/components/form/EditorWorkspace.css';
 
 /** Agent 多窗口编辑工作区（每标签独立面板） */
@@ -93,6 +94,8 @@ export function AgentEditorWorkspace() {
     return () => setHeader(null);
   }, [setHeader]);
 
+  const returnTo = useEditorReturnTo('/agents');
+
   if (!visibleDraftId) {
     return (
       <p>
@@ -100,11 +103,6 @@ export function AgentEditorWorkspace() {
       </p>
     );
   }
-
-  const activeRecord = getAgentDraft(visibleDraftId);
-  const backTo = activeRecord?.agentId
-    ? `/agents/${activeRecord.agentId}`
-    : '/agents';
 
   const tabBar = (
     <FormEditorTabs
@@ -130,7 +128,7 @@ export function AgentEditorWorkspace() {
           <button
             type="button"
             className="form-workspace__back"
-            onClick={() => navigate(backTo)}
+            onClick={() => navigate(returnTo)}
           >
             ← 返回
           </button>

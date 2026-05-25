@@ -10,6 +10,12 @@
   margin-bottom: 0;
 }
 
+.page-header__cta.btn--glass {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: var(--glass-shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
+}
+
 .detail-actions {
   display: flex;
   flex-wrap: wrap;

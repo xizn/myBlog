@@ -15,6 +15,7 @@ import { usePageHeader } from '@/contexts/PageHeaderContext';
 import { useAsyncDialogPhase } from '@/hooks/useAsyncDialogPhase';
 import type { LearningRecord } from '@/types';
 import { formatOpTime } from '@/utils/formDraft';
+import { useEditorReturnTo } from '@/utils/editorReturnTo';
 import '@/components/form/EditorWorkspace.css';
 
 /** 学习笔记多窗口编辑工作区 */
@@ -94,6 +95,8 @@ export function LearningEditorWorkspace() {
     return () => setHeader(null);
   }, [setHeader]);
 
+  const returnTo = useEditorReturnTo('/learning');
+
   if (!visibleDraftId) {
     return (
       <p>
@@ -101,11 +104,6 @@ export function LearningEditorWorkspace() {
       </p>
     );
   }
-
-  const activeRecord = getLearningDraft(visibleDraftId);
-  const backTo = activeRecord?.learningId
-    ? `/learning/${activeRecord.learningId}`
-    : '/learning';
 
   const tabBar = (
     <FormEditorTabs
@@ -131,7 +129,7 @@ export function LearningEditorWorkspace() {
           <button
             type="button"
             className="form-workspace__back"
-            onClick={() => navigate(backTo)}
+            onClick={() => navigate(returnTo)}
           >
             ← 返回
           </button>

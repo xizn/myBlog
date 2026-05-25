@@ -115,7 +115,7 @@ export function DraftBoxPanel({
               多选删除
             </Button>
           )}
-          <Button variant="outline" onClick={onNew}>
+          <Button variant="glass" className="draft-box__new" onClick={onNew}>
             {newButtonLabel}
           </Button>
         </div>
@@ -182,8 +182,10 @@ export function DraftBoxPanel({
                   </div>
                   <div className="draft-box__item-actions">
                     <Button
-                      variant="primary"
-                      className={selectionMode ? 'draft-box__edit-btn--disabled' : undefined}
+                      variant="glass"
+                      className={
+                        selectionMode ? 'draft-box__edit-btn--disabled' : 'draft-box__continue'
+                      }
                       disabled={selectionMode}
                       onClick={() => onEdit(d.draftId)}
                     >
