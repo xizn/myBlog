@@ -1,4 +1,4 @@
-/* Cherry 编辑器区域：对齐 indexdoc-editor 分栏体验，内部可滚动 */
+/* Cherry 分栏：保持默认左右架构（edit & preview），仅修正高度与滚动 */
 .md-split-editor--cherry .md-split-editor__workspace {
   flex: 1;
   min-height: 0;
@@ -20,6 +20,11 @@
   transition: opacity 0.2s ease;
 }
 
+.md-split-editor__cherry-root > .cherry {
+  flex: 1;
+  min-height: 0;
+}
+
 .md-split-editor__cherry-root--ready {
   opacity: 1;
 }
@@ -29,42 +34,73 @@
   pointer-events: none;
 }
 
+/* 与 indexdoc 一致：toolbar 占满首行，编辑区与预览区左右各 50% */
 .md-split-editor--cherry .cherry {
   flex: 1 !important;
   min-height: 0 !important;
   height: 100% !important;
+  max-height: 100% !important;
+  width: 100% !important;
   display: flex !important;
-  flex-direction: column !important;
+  flex-flow: row wrap !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  align-content: flex-start !important;
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
   overflow: hidden !important;
 }
 
+/* 覆盖 cherry 默认 min-height: calc(100% - 48px)，避免被内容撑开 */
+.md-split-editor--cherry .cherry .cherry-editor,
+.md-split-editor--cherry .cherry .cherry-previewer {
+  min-height: 0 !important;
+}
+
 .md-split-editor--cherry .cherry .cherry-toolbar {
-  flex-shrink: 0;
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-editor,
 .md-split-editor--cherry .cherry .cherry-previewer {
-  flex: 1 1 0 !important;
+  width: 50% !important;
+  max-width: 50% !important;
+  /* flex-shrink 须为 1，否则 max-height 无法压住 CodeMirror 撑开的高度 */
+  flex: 0 1 50% !important;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
   min-height: 0 !important;
-  height: auto !important;
-  max-height: none !important;
-  overflow: auto !important;
+  height: calc(100% - 48px) !important;
+  max-height: calc(100% - 48px) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.md-split-editor--cherry .cherry .cherry-editor {
   background: var(--surface-editor) !important;
 }
 
-.md-split-editor--cherry .cherry .CodeMirror {
+.md-split-editor--cherry .cherry .cherry-previewer {
+  background: var(--surface-preview, var(--surface-editor)) !important;
+  border-left: 1px solid var(--border) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.md-split-editor--cherry .cherry .cherry-editor .CodeMirror {
   height: 100% !important;
   font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.875rem;
   line-height: 1.75;
 }
 
-.md-split-editor--cherry .cherry .CodeMirror-scroll {
+.md-split-editor--cherry .cherry .cherry-editor .CodeMirror-scroll {
   overflow: auto !important;
-  max-height: 100%;
+  height: 100% !important;
+  max-height: 100% !important;
 }
 
 .md-split-editor--cherry .cherry-previewer img {

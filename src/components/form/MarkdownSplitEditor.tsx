@@ -8,6 +8,7 @@ import {
   cmIndexFromPos,
   getCodeMirrorFromHost,
 } from '@/utils/cherryCodeMirror';
+import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import {
   findTextMatches,
   offsetToLineCol,
@@ -165,6 +166,25 @@ export function MarkdownSplitEditor({
       cm.off('cursorActivity', onActivity);
     };
   }, [ready, editorId, syncCursor]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const host = document.getElementById(editorId);
+    if (!host) return;
+
+    const syncLayout = () => syncCherryPaneHeights(editorId);
+    syncLayout();
+
+    const cherry = host.querySelector('.cherry');
+    const ro = new ResizeObserver(syncLayout);
+    if (cherry) ro.observe(cherry);
+    window.addEventListener('resize', syncLayout);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', syncLayout);
+    };
+  }, [ready, editorId, value]);
 
   useEffect(() => {
     if (!ready) return;

@@ -126,6 +126,25 @@ async function run() {
   }
   console.log('OK: Cherry Markdown — 分栏编辑区已加载');
 
+  // Regression: 左右分栏（非上下叠放）
+  const splitLayoutOk = await page.evaluate(() => {
+    const editor = document.querySelector('.editor-draft-panel--active .cherry-editor');
+    const preview = document.querySelector('.editor-draft-panel--active .cherry-previewer');
+    const cherry = document.querySelector('.editor-draft-panel--active .cherry');
+    if (!editor || !preview || !cherry) return false;
+    const er = editor.getBoundingClientRect();
+    const pr = preview.getBoundingClientRect();
+    const cherryFlex = getComputedStyle(cherry).flexDirection;
+    const sameRow = Math.abs(er.top - pr.top) < 12;
+    const sideBySide = pr.left >= er.right - 4 || er.left >= pr.right - 4;
+    const halfWidth = er.width > 120 && pr.width > 120;
+    return cherryFlex === 'row' && sameRow && sideBySide && halfWidth;
+  });
+  if (!splitLayoutOk) {
+    throw new Error('Cherry 应为左右分栏（编辑左、预览右），当前布局异常');
+  }
+  console.log('OK: Cherry Markdown — 左右分栏布局正确');
+
   const toolbar = page.locator('.editor-draft-panel--active .cherry-toolbar');
   if ((await toolbar.count()) < 1) {
     throw new Error('Cherry 工具栏未渲染');
@@ -134,14 +153,11 @@ async function run() {
 
   // Regression: 编辑区内部可滚动（长文时 scrollHeight > clientHeight）
   const scrollOk = await page.evaluate(() => {
-    const scrollEl = document.querySelector('.editor-draft-panel--active .CodeMirror-scroll');
+    const scrollEl =
+      document.querySelector('.editor-draft-panel--active .CodeMirror-scroll') ??
+      document.querySelector('.editor-draft-panel--active .cherry-editor');
     if (!scrollEl) return false;
-    const style = getComputedStyle(scrollEl);
-    const canScroll =
-      scrollEl.scrollHeight > scrollEl.clientHeight + 8 ||
-      style.overflowY === 'auto' ||
-      style.overflowY === 'scroll';
-    if (!canScroll) return false;
+    if (scrollEl.scrollHeight <= scrollEl.clientHeight + 8) return false;
     scrollEl.scrollTop = 0;
     scrollEl.scrollTop = 160;
     return scrollEl.scrollTop > 0;

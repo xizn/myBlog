@@ -24,10 +24,18 @@ assert(modalCss.includes('right: 0'), 'history should be right drawer');
 assert(modalCss.includes('rgba(28, 25, 23, 0.42)'), 'history backdrop should be semi-transparent');
 assert(modalCss.includes('translateX(100%)'), 'history drawer slide animation missing');
 
+const cherryCss = readFileSync(join(root, 'src/components/form/CherryMarkdownEditor.css'), 'utf8');
+assert(cherryCss.includes('flex-flow: row wrap'), 'cherry should use row wrap split layout');
+assert(!cherryCss.includes('flex-direction: column !important'), 'cherry must not force column layout');
+
 const editorSrc = readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.tsx'), 'utf8');
 assert(editorSrc.includes('loadCherryMarkdown'), 'MarkdownSplitEditor should use Cherry');
 assert(editorSrc.includes('md-split-editor__search-input'), 'editor search UI missing');
-assert(editorSrc.includes('position: sticky') || readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.css'), 'utf8').includes('position: sticky'), 'sticky chrome missing');
+assert(
+  editorSrc.includes('position: sticky') ||
+    readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.css'), 'utf8').includes('position: sticky'),
+  'sticky chrome missing'
+);
 
 const blogSrc = readFileSync(join(root, 'src/components/learning/MarkdownContent.tsx'), 'utf8');
 assert(blogSrc.includes('MarkdownZoomableImage'), 'blog image zoom missing');
