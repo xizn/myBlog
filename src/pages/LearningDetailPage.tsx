@@ -13,6 +13,7 @@ import { ExportMenuButton } from '@/components/common/ExportMenuButton';
 import { formatDate } from '@/utils/formatDate';
 import { formatLastRead } from '@/utils/formatLastRead';
 import { learningToExportBlocks } from '@/utils/learningExport';
+import { backNavStateForReturn, useEditorReturnTo } from '@/utils/editorReturnTo';
 import '@/components/form/FormFlagToggle.css';
 import '@/components/common/PageActions.css';
 import './LearningDetailPage.css';
@@ -54,13 +55,18 @@ export function LearningDetailPage() {
     else setConfirmOpen(false);
   };
 
+  const returnTo = useEditorReturnTo('/learning');
+  const backLinkState = backNavStateForReturn(location.state, returnTo);
+
   if (loading) return <p className="page-loading">加载中…</p>;
   if (!item) {
     return (
       <div>
         <EmptyState title="文章不存在" />
         <p className="learning-detail__back-wrap">
-          <Link to="/learning">返回列表</Link>
+          <Link to={returnTo} state={backLinkState}>
+            返回
+          </Link>
         </p>
       </div>
     );
@@ -69,8 +75,8 @@ export function LearningDetailPage() {
   return (
     <article className="learning-detail">
       <div className="learning-detail__top">
-        <Link to="/learning" className="learning-detail__back">
-          ← 返回列表
+        <Link to={returnTo} state={backLinkState} className="learning-detail__back">
+          ← 返回
         </Link>
         <div className="detail-actions detail-actions--top">
           <FormFlagToggle

@@ -1,5 +1,6 @@
 import { useCallback, useRef, type AnchorHTMLAttributes, type MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { buildInternalNavState } from '@/utils/editorReturnTo';
 import ReactMarkdown from 'react-markdown';
 import rehypeSlug from 'rehype-slug';
 import { MarkdownZoomableImage } from '@/components/learning/MarkdownZoomableImage';
@@ -63,12 +64,22 @@ function MarkdownAnchor({
 /** Markdown 正文渲染（标题锚点 + 目录同页跳转） */
 export function MarkdownContent({ content }: MarkdownContentProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const articleRef = useRef<HTMLElement>(null);
+
+  const navigateInternal = useCallback(
+    (to: string) => {
+      const fallback = location.pathname.startsWith('/agents') ? '/agents' : '/learning';
+      navigate(to, { state: buildInternalNavState(location, fallback) });
+    },
+    [location, navigate]
+  );
+
   const renderAnchor = useCallback(
     (props: AnchorHTMLAttributes<HTMLAnchorElement>) => (
-      <MarkdownAnchor {...props} onNavigate={navigate} />
+      <MarkdownAnchor {...props} onNavigate={navigateInternal} />
     ),
-    [navigate]
+    [navigateInternal]
   );
 
   const handleArticleClick = useCallback((e: MouseEvent<HTMLElement>) => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AiFormatButton } from '@/components/form/AiFormatButton';
 import { MarkdownHint } from '@/components/form/MarkdownHint';
 import {
@@ -19,6 +19,7 @@ import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorThe
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import { mountCherryNoteLinkButton } from '@/utils/cherryNoteLinkButton';
 import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
+import { buildInternalNavState } from '@/utils/editorReturnTo';
 import {
   findTextMatches,
   offsetToLineCol,
@@ -42,6 +43,7 @@ export function MarkdownSplitEditor({
   disabled,
 }: MarkdownSplitEditorProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const reactId = useId().replace(/:/g, '');
   const editorId = `cherry-md-${reactId}`;
   const cherryRef = useRef<CherryInstance | null>(null);
@@ -246,7 +248,10 @@ export function MarkdownSplitEditor({
         const resolved = resolveAppLink(anchor.href);
         if (resolved?.kind === 'internal') {
           e.preventDefault();
-          navigate(internalLinkTo(resolved.pathname, resolved.search, resolved.hash));
+          const fallback = location.pathname.startsWith('/agents') ? '/agents' : '/learning';
+          navigate(internalLinkTo(resolved.pathname, resolved.search, resolved.hash), {
+            state: buildInternalNavState(location, fallback),
+          });
           return;
         }
         if (resolved?.kind === 'external') {
@@ -268,7 +273,7 @@ export function MarkdownSplitEditor({
     });
 
     return () => preview.removeEventListener('click', onPreviewClick, true);
-  }, [ready, editorId, value, navigate]);
+  }, [ready, editorId, value, navigate, location]);
 
   const applyAiMarkdown = (markdown: string) => {
     const cherry = cherryRef.current;

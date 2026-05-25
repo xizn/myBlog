@@ -16,6 +16,7 @@ import { formatDate } from '@/utils/formatDate';
 import { formatLastRead } from '@/utils/formatLastRead';
 import { agentToExportBlocks } from '@/utils/agentExport';
 import { canPreview, getPreviewSrc } from '@/utils/getPreviewSrc';
+import { backNavStateForReturn, useEditorReturnTo } from '@/utils/editorReturnTo';
 import '@/components/form/FormFlagToggle.css';
 import '@/components/common/PageActions.css';
 import './AgentDetailPage.css';
@@ -62,6 +63,9 @@ export function AgentDetailPage() {
     else setConfirmOpen(false);
   };
 
+  const returnTo = useEditorReturnTo('/agents');
+  const backLinkState = backNavStateForReturn(location.state, returnTo);
+
   if (loading) return <p className="page-loading">加载中…</p>;
   if (!item) {
     return (
@@ -80,8 +84,8 @@ export function AgentDetailPage() {
   return (
     <article className="agent-detail">
       <div className="agent-detail__top">
-        <Link to="/agents" className="agent-detail__back">
-          ← 返回列表
+        <Link to={returnTo} state={backLinkState} className="agent-detail__back">
+          ← 返回
         </Link>
         <div className="detail-actions detail-actions--top">
           <FormFlagToggle
