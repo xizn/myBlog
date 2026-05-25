@@ -7,7 +7,40 @@ export type CherryPreviewerSync = {
   highlightLine?: (lineNum: number) => void;
 };
 
-/** Cherry 行号联动（备用） */
+type PreviewerWithAnimation = CherryPreviewerSync & {
+  animation?: { timer?: number; destinationTop?: number };
+};
+
+/** 与 Cherry Previewer.getDomCanScroll 一致，定位真正可滚动的预览容器 */
+export function getCherryPreviewScrollElement(previewRoot: HTMLElement): HTMLElement {
+  let current: HTMLElement | null = previewRoot;
+  while (current) {
+    if (
+      current.scrollHeight > current.clientHeight ||
+      current.clientHeight < window.innerHeight
+    ) {
+      return current;
+    }
+    if (current.nodeName === 'BODY') {
+      if (document.documentElement.scrollHeight > document.documentElement.clientHeight) {
+        return document.documentElement;
+      }
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return previewRoot;
+}
+
+function cancelPreviewerScrollAnimation(previewer: PreviewerWithAnimation | undefined): void {
+  const timer = previewer?.animation?.timer;
+  if (timer) {
+    cancelAnimationFrame(timer);
+    previewer!.animation!.timer = 0;
+  }
+}
+
+/** Cherry 行号联动（与内置 onScroll 算法一致） */
 function syncPreviewByLine(cm: CodeMirrorEditor, previewer: CherryPreviewerSync): void {
   const scroller = cm.getScrollerElement();
 
@@ -32,30 +65,43 @@ function syncPreviewByLine(cm: CodeMirrorEditor, previewer: CherryPreviewerSync)
   previewer.highlightLine?.(targetLine + 1);
 }
 
-/** 按比例同步预览 scrollTop（主路径，用户滚动时最稳定） */
-function syncPreviewByRatio(editorScroller: HTMLElement, previewEl: HTMLElement): boolean {
+/** 按比例即时同步（走 scrollToTop / 真实滚动容器，避免动画与错误节点） */
+function syncPreviewByRatio(
+  editorScroller: HTMLElement,
+  previewScrollEl: HTMLElement,
+  previewer?: PreviewerWithAnimation
+): boolean {
   const maxEditor = editorScroller.scrollHeight - editorScroller.clientHeight;
-  const maxPreview = previewEl.scrollHeight - previewEl.clientHeight;
+  const maxPreview = previewScrollEl.scrollHeight - previewScrollEl.clientHeight;
   if (maxEditor <= 4 || maxPreview <= 4) return false;
 
   const ratio = editorScroller.scrollTop / maxEditor;
-  previewEl.scrollTop = ratio * maxPreview;
+  const targetTop = ratio * maxPreview;
+
+  cancelPreviewerScrollAnimation(previewer);
+
+  if (previewer?.scrollToTop) {
+    previewer.scrollToTop(targetTop, 'auto');
+    return true;
+  }
+
+  previewScrollEl.scrollTop = targetTop;
   return true;
 }
 
 /**
  * 绑定编辑区 → 预览区滚动联动
- * 主：比例同步；备：Cherry 行号同步
+ * 主：比例即时同步（真实滚动容器）；备：Cherry 行号同步
  */
 export function bindCherryEditorPreviewScroll(
   hostId: string,
   cherry: CherryInstance | null | undefined
 ): () => void {
   const host = document.getElementById(hostId);
-  const previewEl = host?.querySelector('.cherry-previewer') as HTMLElement | null;
+  const previewRoot = host?.querySelector('.cherry-previewer') as HTMLElement | null;
   const cm = getCodeMirrorFromHost(hostId);
-  const previewer = cherry?.previewer;
-  if (!previewEl || !cm) return () => {};
+  const previewer = cherry?.previewer as PreviewerWithAnimation | undefined;
+  if (!previewRoot || !cm) return () => {};
 
   const scroller = cm.getScrollerElement();
   let raf = 0;
@@ -63,8 +109,10 @@ export function bindCherryEditorPreviewScroll(
   const runSync = () => {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
-      const ok = syncPreviewByRatio(scroller, previewEl);
-      if (!ok && previewer) {
+      const scrollEl = getCherryPreviewScrollElement(previewRoot);
+      const ratioOk = syncPreviewByRatio(scroller, scrollEl, previewer);
+      if (!ratioOk && previewer) {
+        cancelPreviewerScrollAnimation(previewer);
         syncPreviewByLine(cm, previewer);
       }
     });

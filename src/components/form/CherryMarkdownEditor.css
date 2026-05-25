@@ -42,8 +42,8 @@
   display: flex !important;
   flex-flow: row wrap !important;
   flex-direction: row !important;
-  align-items: stretch !important;
-  align-content: stretch !important;
+  align-items: flex-start !important;
+  align-content: flex-start !important;
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
@@ -60,6 +60,7 @@
 .md-split-editor--cherry .cherry .cherry-previewer {
   box-sizing: border-box !important;
   flex: 0 1 auto !important;
+  align-self: flex-start !important;
   min-height: 0 !important;
   height: calc(100% - 48px) !important;
   max-height: calc(100% - 48px) !important;
@@ -76,11 +77,37 @@
   border-left: 1px solid var(--border) !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
+  overscroll-behavior: contain;
 }
 
-html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown {
+  min-height: 0;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-toolbar {
+  background: var(--surface-editor) !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button {
+  color: var(--text-muted) !important;
+  background: transparent !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:hover {
+  color: var(--text) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor {
+  background: var(--surface-editor) !important;
+}
+
 html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-previewer {
-  background: var(--bg-elevated) !important;
+  background: var(--surface-preview) !important;
+  border-left-color: var(--border) !important;
 }
 
 .md-split-editor--cherry .cherry-drag,
@@ -99,7 +126,144 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-previewer 
 }
 
 html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor .CodeMirror {
-  background: var(--bg-elevated) !important;
+  background: var(--surface-editor) !important;
+  color: #f5f4f0 !important;
+  caret-color: #fafaf9;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .CodeMirror-gutters {
+  background: var(--surface-editor) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .CodeMirror-linenumber {
+  color: #a8a29e !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .CodeMirror-cursor {
+  border-left-color: #fafaf9 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .CodeMirror-selected {
+  background: rgba(154, 123, 74, 0.32) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll span,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-variable-2,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-string,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-strong,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-em,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-meta,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-keyword,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-atom,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-def {
+  color: #f5f4f0 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-header {
+  color: #fafaf9 !important;
+  font-weight: 700;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-link,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-url {
+  color: #9ec5ff !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-string {
+  color: #f5f4f0 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-comment {
+  color: #a8a29e !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-quote {
+  color: #d6d3cd !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-strong {
+  color: #fafaf9 !important;
+  font-weight: 700;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-keyword {
+  color: #d4bcff !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-meta,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cm-s-default .cm-tag {
+  color: #f5b87a !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown.theme__light,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown.theme__dark {
+  color: #f5f4f0 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h1,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h2,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h3,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h4,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h5,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h6 {
+  color: #fafaf9 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown a.anchor:before {
+  color: var(--accent) !important;
+  opacity: 0.95;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown p,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown li,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown td,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown th,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown blockquote {
+  color: #e8e4dc !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown table,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown .cherry-table {
+  color: #e8e4dc !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown table th,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown .cherry-table th {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fafaf9 !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown table td,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown .cherry-table td {
+  border-color: var(--border) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown a {
+  color: #9ec5ff !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown :not(pre) > code,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown p code,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown li code,
+html[data-theme-mode='dark'] .md-split-editor--cherry [data-inline-code-theme='red'] .cherry-markdown :not(pre) > code,
+html[data-theme-mode='dark'] .md-split-editor--cherry [data-inline-code-theme='black'] .cherry-markdown :not(pre) > code {
+  color: #f5d0a8 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown pre {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--border) !important;
+  color: #f5f4f0 !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown blockquote {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-left-color: var(--accent) !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-editor .CodeMirror-scroll {

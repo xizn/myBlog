@@ -9,6 +9,7 @@ import {
   getCodeMirrorFromHost,
 } from '@/utils/cherryCodeMirror';
 import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
+import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import {
   findTextMatches,
@@ -110,6 +111,7 @@ export function MarkdownSplitEditor({
           width: '100%',
           value,
           locale: 'zh_CN',
+          themeSettings: getCherryThemeSettings(),
           callback: {
             afterChange: (text: string) => {
               if (syncingRef.current) return;
@@ -136,6 +138,22 @@ export function MarkdownSplitEditor({
       cherryRef.current = null;
     };
   }, [editorId]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const cherry = cherryRef.current;
+    syncCherryTheme(cherry);
+
+    const observer = new MutationObserver(() => {
+      syncCherryTheme(cherryRef.current);
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme-mode'],
+    });
+
+    return () => observer.disconnect();
+  }, [ready]);
 
   useEffect(() => {
     const cherry = cherryRef.current;

@@ -8,6 +8,10 @@ export interface ThemeSettings {
   backgroundImageSize: 'cover' | 'contain';
   /** 背景图不透明度 0–100 */
   backgroundImageOpacity: number;
+  /** 有背景图时编辑区表面：磨砂玻璃 / 透明（仅背景图模式生效） */
+  backgroundSurfaceMode: 'glass' | 'transparent';
+  /** 有背景图时 UI 文字色调：自动 / 强制浅色 / 强制深色 */
+  backgroundImageTextMode: 'auto' | 'light' | 'dark';
 }
 
 export interface ThemePreset {

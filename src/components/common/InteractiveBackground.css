@@ -16,10 +16,6 @@
   opacity: var(--theme-bg-image-opacity, 0.35);
 }
 
-html[data-theme-bg-image='1'] .interactive-bg__orb {
-  opacity: 0.25;
-}
-
 /* 细网格 */
 .interactive-bg__grid {
   position: absolute;
@@ -111,4 +107,20 @@ html[data-theme-bg-image='1'] .interactive-bg__orb {
   .interactive-bg__glow {
     transition: none;
   }
+}
+
+/* 有背景图：减弱鼠标光晕与漂浮光斑 */
+html[data-theme-bg-image='1'] .interactive-bg__glow {
+  width: 420px;
+  height: 420px;
+  opacity: 0.4;
+}
+
+html[data-theme-bg-image='1'] .interactive-bg__grid {
+  opacity: 0.35;
+}
+
+html[data-theme-bg-image='1'] .interactive-bg__orb {
+  opacity: 0.12;
+  filter: blur(64px);
 }

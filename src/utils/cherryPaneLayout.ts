@@ -21,16 +21,22 @@ export function syncCherryPaneHeights(hostId: string, cherry?: CherryInstance | 
   const paneH = Math.max(160, cherryEl.clientHeight - (toolbar?.offsetHeight ?? 48));
   const px = `${paneH}px`;
 
-  editor.style.height = px;
-  editor.style.maxHeight = px;
-  editor.style.minHeight = '0';
+  editor.style.setProperty('height', px, 'important');
+  editor.style.setProperty('max-height', px, 'important');
+  editor.style.setProperty('min-height', '0', 'important');
   editor.style.overflow = 'hidden';
 
-  preview.style.height = px;
-  preview.style.maxHeight = px;
-  preview.style.minHeight = '0';
+  preview.style.setProperty('height', px, 'important');
+  preview.style.setProperty('max-height', px, 'important');
+  preview.style.setProperty('min-height', '0', 'important');
   preview.style.overflowY = 'auto';
   preview.style.overflowX = 'hidden';
+  preview.style.overscrollBehavior = 'contain';
+
+  const markdown = preview.querySelector('.cherry-markdown') as HTMLElement | null;
+  if (markdown) {
+    markdown.style.minHeight = '0';
+  }
 
   const cmEl = editor.querySelector('.CodeMirror') as
     | (HTMLElement & { CodeMirror?: CodeMirrorWithDom })

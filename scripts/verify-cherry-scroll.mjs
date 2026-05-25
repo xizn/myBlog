@@ -63,6 +63,9 @@ const syncOk = await page.evaluate(async () => {
   if (!opaque && !editorBg.includes('28, 27')) {
     return { ok: false, reason: `editor not opaque: ${editorBg}` };
   }
+  cmScroll.scrollTop = 0;
+  preview.scrollTop = 0;
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   const before = preview.scrollTop;
   cmScroll.scrollTop = Math.min(320, cmScroll.scrollHeight - cmScroll.clientHeight);
   cmScroll.dispatchEvent(new Event('scroll', { bubbles: true }));

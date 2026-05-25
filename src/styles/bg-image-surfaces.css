@@ -5,6 +5,31 @@
 html[data-theme-bg-image='1'] {
   --glass-blur: 24px;
   --glass-saturate: 1.45;
+  --text-halo-dark: 0 1px 2px rgba(0, 0, 0, 0.72), 0 0 10px rgba(0, 0, 0, 0.35);
+  --text-halo-light: 0 1px 2px rgba(255, 255, 255, 0.92), 0 0 8px rgba(255, 255, 255, 0.65);
+}
+
+/* 直接叠在背景图上的文字：仅顶栏/透明编辑区，玻璃面板内不加描边 */
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .site-header__logo,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .site-header__tagline,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .site-header__link,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='dark'] .form-field > label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='dark'] .form-label-row label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='dark'] .form-workspace__back,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='dark'] .form-hint,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='dark'] .form-workspace__title {
+  text-shadow: var(--text-halo-dark);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .site-header__logo,
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .site-header__tagline,
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .site-header__link,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='light'] .form-field > label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='light'] .form-label-row label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='light'] .form-workspace__back,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='light'] .form-hint,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'][data-theme-bg-tone='light'] .form-workspace__title {
+  text-shadow: var(--text-halo-light);
 }
 
 /* 通用玻璃面板 */
@@ -18,17 +43,30 @@ html[data-theme-bg-image='1'] .draft-box,
 html[data-theme-bg-image='1'] .learning-page__filters,
 html[data-theme-bg-image='1'] .agents-page__filters,
 html[data-theme-bg-image='1'] .empty-state,
-html[data-theme-bg-image='1'] .form-workspace__main .form-workspace__inner,
 html[data-theme-bg-image='1'] .form-workspace__header,
-html[data-theme-bg-image='1'] .form-sidebar {
+html[data-theme-bg-image='1'] .form-sidebar,
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-workspace__main .form-workspace__inner {
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 
 html[data-theme-bg-image='1'] .site-header {
   background: var(--header-bg);
-  border-bottom-color: var(--border);
+  border-bottom-color: transparent;
   box-shadow: var(--glass-shadow);
+}
+
+html[data-theme-bg-tone='dark'] .site-header__logo {
+  color: #f5f4f0;
+}
+
+html[data-theme-bg-tone='dark'] .site-header__tagline,
+html[data-theme-bg-tone='dark'] .site-header__link {
+  color: #e0dcd4;
+}
+
+html[data-theme-bg-tone='dark'] .site-header__link:hover {
+  color: #f5f4f0;
 }
 
 html[data-theme-bg-image='1'] .page-header,
@@ -38,7 +76,7 @@ html[data-theme-bg-image='1'] .home-hero {
   padding: 1.5rem;
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: none;
   box-shadow: var(--glass-shadow);
 }
 
@@ -60,13 +98,13 @@ html[data-theme-bg-image='1'] .draft-box {
   padding: 1.5rem;
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: none;
   box-shadow: var(--glass-shadow);
 }
 
 html[data-theme-bg-image='1'] .draft-box__item {
   background: var(--bg-elevated);
-  border-color: var(--border);
+  border: none;
   backdrop-filter: blur(16px) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturate));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -102,7 +140,16 @@ html[data-theme-bg-image='1'] .list-search__hint {
 }
 
 html[data-theme-bg-image='1'] .site-header__link--active {
-  color: var(--accent);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  font-weight: 500;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .site-header__link--active {
+  color: #1c1b19;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
 /* 搜索框：跟随主题玻璃，不用硬编码白底 */
@@ -137,7 +184,7 @@ html[data-theme-bg-image='1'] .agents-page__filters {
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: none;
   box-shadow: var(--glass-shadow);
 }
 
@@ -160,13 +207,74 @@ html[data-theme-bg-image='1'] .learning-card {
 }
 
 html[data-theme-bg-image='1'] .learning-card__summary,
-html[data-theme-bg-image='1'] .learning-card__read {
+html[data-theme-bg-image='1'] .learning-card__read,
+html[data-theme-bg-image='1'] .learning-card__date {
   color: var(--text-muted);
 }
 
-html[data-theme-bg-image='1'] .tag {
-  color: var(--text-muted);
-  border-color: var(--border);
+html[data-theme-bg-image='1'] .learning-card__title {
+  color: var(--text);
+}
+
+html[data-theme-bg-image='1'] .draft-box__item-title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* 亮色背景图：按钮与卡片高对比 */
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .btn--primary {
+  background: #1c1b19;
+  color: #f5f4f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .btn--primary:hover {
+  background: #2a2826;
+  filter: none;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .btn--outline {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .btn--outline:hover {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.22);
+  background: #ffffff;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .draft-box__enter-select {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .draft-box__enter-select:hover:not(:disabled) {
+  color: #b42318;
+  border-color: rgba(180, 35, 24, 0.35);
+  background: #ffffff;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .learning-card,
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .draft-box__item {
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .tag {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .tag--active,
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .tag--clickable:hover {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 html[data-theme-bg-image='1'] .tag--clickable:hover {
@@ -174,49 +282,124 @@ html[data-theme-bg-image='1'] .tag--clickable:hover {
   border-color: var(--border-hover);
 }
 
-/* 编辑页 */
-html[data-theme-bg-image='1'] .form-workspace__header {
-  background: var(--surface-header);
-  border-bottom-color: var(--border);
+/* 编辑页 · 侧栏草稿区：始终磨砂玻璃 */
+html[data-theme-bg-image='1'] .form-sidebar {
+  background: var(--surface-sidebar);
+  border-left: none;
   box-shadow: var(--glass-shadow);
 }
 
-html[data-theme-bg-image='1'] .form-workspace__main .form-workspace__inner {
+html[data-theme-bg-image='1'] .form-sidebar__draft-card {
+  background: var(--bg-elevated);
+  border: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* 编辑页 · 磨砂玻璃模式 */
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-workspace__header {
+  background: var(--surface-header);
+  border-bottom: none;
+  box-shadow: var(--glass-shadow);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-workspace__main .form-workspace__inner {
   max-width: min(920px, 100%);
   margin-left: auto;
   margin-right: auto;
   padding: 1.25rem 1.5rem;
   border-radius: var(--radius-lg);
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: none;
   box-shadow: var(--glass-shadow);
 }
 
-html[data-theme-bg-image='1'] .form-sidebar {
-  background: var(--surface-sidebar);
-  border-left-color: var(--border);
-  box-shadow: var(--glass-shadow);
+/* 编辑页 · 透明模式（仅主表单区，不影响其他页面主题色） */
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-workspace__header {
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
 }
 
-html[data-theme-bg-image='1'] .form-sidebar__draft-card {
-  background: var(--bg-elevated);
-  border-color: var(--border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-workspace__main .form-workspace__inner {
+  max-width: min(920px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-workspace__title,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-field > label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-label-row label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-workspace__back,
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-hint {
+  color: var(--text-muted);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-surface='transparent'] .form-actions {
+  border-top-color: var(--border);
+}
+
+/* 侧栏按钮：outline 勿用白底 + 浅色字 */
+html[data-theme-bg-image='1'] .form-sidebar .btn--outline {
+  color: var(--text);
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html[data-theme-bg-image='1'] .form-sidebar .btn--outline:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-sidebar .btn--outline {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-sidebar .btn--outline:hover {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.24);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+html[data-theme-bg-image='1'] .form-sidebar .btn--ghost {
+  color: var(--text-muted);
+}
+
+html[data-theme-bg-image='1'] .form-sidebar .btn--ghost:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-sidebar .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 html[data-theme-bg-image='1'] .form-workspace__title,
 html[data-theme-bg-image='1'] .form-sidebar__title,
 html[data-theme-bg-image='1'] .form-sidebar__draft-name,
 html[data-theme-bg-image='1'] .form-sidebar__item-action,
-html[data-theme-bg-image='1'] .form-field > label,
-html[data-theme-bg-image='1'] .form-workspace__title {
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-field > label,
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-label-row label {
   color: var(--text);
+  font-weight: 500;
 }
 
 html[data-theme-bg-image='1'] .form-workspace__back,
 html[data-theme-bg-image='1'] .form-sidebar__draft-desc,
 html[data-theme-bg-image='1'] .form-sidebar__empty,
-html[data-theme-bg-image='1'] .form-hint {
+html[data-theme-bg-image='1'][data-theme-bg-surface='glass'] .form-hint {
   color: var(--text-muted);
 }
 
@@ -226,13 +409,66 @@ html[data-theme-bg-image='1'] .form-sidebar__item-detail {
   color: var(--text-subtle);
 }
 
-/* 编辑器白底孤岛：深色背景下仍保持清晰 */
-html[data-theme-bg-image='1'] .md-split-editor,
+/* 编辑器白底孤岛：重置文字变量，避免继承深色背景的全局浅色字 */
+html[data-theme-bg-image='1'] .md-split-editor {
+  --text: #1c1b19;
+  --text-muted: #5a554e;
+  --text-subtle: #6e6962;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-hover: rgba(0, 0, 0, 0.16);
+  --surface-input: #ffffff;
+  --accent-dim: rgba(90, 85, 78, 0.1);
+  background: rgba(255, 255, 255, 0.98);
+  color: #1c1b19;
+  border: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
 html[data-theme-bg-image='1'] .md-split-editor__chrome {
   background: rgba(255, 255, 255, 0.98);
   color: #1c1b19;
-  border-color: rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .btn--outline {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.14);
+  background: #ffffff;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .btn--outline:hover {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.22);
+  background: #f5f4f0;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .btn--ghost {
+  color: #5a554e;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .btn--ghost:hover {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .ai-format__settings {
+  color: #5a554e;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .ai-format__settings:hover:not(:disabled) {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .markdown-hint__trigger {
+  color: #5a554e;
+  background: #f5f4f0;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme-bg-image='1'] .md-split-editor .markdown-hint__trigger:hover,
+html[data-theme-bg-image='1'] .md-split-editor .markdown-hint__trigger:focus-visible {
+  color: #1c1b19;
+  border-color: rgba(0, 0, 0, 0.18);
+  background: #eceae6;
 }
 
 html[data-theme-bg-image='1'] .md-split-editor__label {
@@ -267,4 +503,45 @@ html[data-theme-bg-image='1'] .form-field textarea {
 html[data-theme-bg-image='1'] .form-field input::placeholder,
 html[data-theme-bg-image='1'] .form-field textarea::placeholder {
   color: rgba(28, 27, 25, 0.45);
+}
+
+/* 有背景图：保存/取消按钮高对比（透明模式下尤为重要） */
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .form-actions .btn--primary {
+  background: #f0ece4;
+  color: #1c1b19;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .form-actions .btn--primary:hover {
+  background: #ffffff;
+  filter: none;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-actions .btn--primary {
+  background: #1c1b19;
+  color: #f5f4f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-actions .btn--primary:hover {
+  background: #2a2826;
+  filter: none;
+}
+
+html[data-theme-bg-image='1'] .form-actions .btn--ghost {
+  color: var(--text-muted);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .form-actions .btn--ghost {
+  color: #e0dcd4;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .form-actions .btn--ghost:hover {
+  color: #f5f4f0;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .form-actions .btn--ghost:hover {
+  color: #1c1b19;
+  background: rgba(255, 255, 255, 0.45);
 }

@@ -28,7 +28,7 @@
 
 html[data-theme-mode='dark'] .md-split-editor,
 html[data-theme-mode='dark'] .md-split-editor__chrome {
-  background: var(--bg-elevated);
+  background: var(--surface-editor);
 }
 
 .md-split-editor__head {

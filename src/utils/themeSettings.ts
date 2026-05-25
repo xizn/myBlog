@@ -1,15 +1,18 @@
 import type { ThemePreset, ThemeSettings } from '@/types/themeSettings';
 import {
   accentFromBackground,
+  contrastMutedOn,
+  contrastSubtleOn,
   contrastTextOn,
   hexToRgba,
   isDarkBackground,
+  mixHexWithBlack,
   mixHexWithWhite,
   parseHexColor,
   tintedDarkGlass,
   tintedLightGlass,
 } from '@/utils/colorUtils';
-import { analyzeImageLuminance } from '@/utils/imageLuminance';
+import { analyzeImageZoneLuminance } from '@/utils/imageLuminance';
 import { getStorageItem, setStorageItem } from '@/utils/appStorage';
 
 const STORAGE_KEY = 'myblog_theme_settings';
@@ -23,6 +26,8 @@ export const DEFAULT_THEME: ThemeSettings = {
   backgroundImage: '',
   backgroundImageSize: 'cover',
   backgroundImageOpacity: 35,
+  backgroundSurfaceMode: 'glass',
+  backgroundImageTextMode: 'auto',
 };
 
 export const THEME_PRESETS: ThemePreset[] = [
@@ -63,29 +68,29 @@ export function applyThemeSettings(settings: ThemeSettings = loadThemeSettings()
   const accent = accentFromBackground(bg);
 
   const text = contrastTextOn(bg);
-  const textMuted = dark ? mixHexWithWhite(bg, 0.55) : '#5a554e';
-  const bgElevated = dark ? mixHexWithWhite(bg, 0.1) : '#ffffff';
-  const bgCard = dark ? hexToRgba(mixHexWithWhite(bg, 0.12), 0.92) : 'rgba(255, 255, 255, 0.82)';
-  const surfaceInput = dark ? mixHexWithWhite(bg, 0.14) : '#ffffff';
-  const surfaceHeader = hexToRgba(dark ? mixHexWithWhite(bg, 0.06) : bg, 0.92);
-  const surfaceSidebar = hexToRgba(dark ? mixHexWithWhite(bg, 0.04) : bg, dark ? 0.88 : 0.75);
-  const surfaceEditor = dark ? mixHexWithWhite(bg, 0.08) : mixHexWithWhite(bg, 0.02);
-  const surfacePreview = dark ? mixHexWithWhite(bg, 0.12) : '#ffffff';
+  const textMuted = contrastMutedOn(bg, text);
+  const bgElevated = dark ? 'rgba(255, 255, 255, 0.07)' : '#ffffff';
+  const bgCard = dark ? 'rgba(255, 255, 255, 0.045)' : 'rgba(255, 255, 255, 0.82)';
+  const surfaceInput = dark ? mixHexWithWhite(bg, 0.12) : '#ffffff';
+  const surfaceHeader = hexToRgba(dark ? mixHexWithWhite(bg, 0.05) : bg, dark ? 0.88 : 0.92);
+  const surfaceSidebar = hexToRgba(dark ? mixHexWithWhite(bg, 0.03) : bg, dark ? 0.82 : 0.75);
+  const surfaceEditor = dark ? mixHexWithWhite(bg, 0.07) : mixHexWithWhite(bg, 0.02);
+  const surfacePreview = dark ? mixHexWithWhite(bg, 0.1) : '#ffffff';
 
   root.dataset.themeMode = dark ? 'dark' : 'light';
   root.style.setProperty('--bg', bg);
   root.style.setProperty('--bg-elevated', bgElevated);
   root.style.setProperty('--bg-card', bgCard);
-  root.style.setProperty('--border', dark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(0, 0, 0, 0.1)');
-  root.style.setProperty('--border-hover', dark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(0, 0, 0, 0.16)');
+  root.style.setProperty('--border', dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)');
+  root.style.setProperty('--border-hover', dark ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.16)');
   root.style.setProperty('--text', text);
   root.style.setProperty('--text-muted', textMuted);
-  root.style.setProperty('--text-subtle', dark ? mixHexWithWhite(bg, 0.48) : '#6e6962');
+  root.style.setProperty('--text-subtle', contrastSubtleOn(bg, text));
   root.style.setProperty('--placeholder', dark ? 'rgba(245, 244, 240, 0.55)' : 'rgba(90, 85, 78, 0.65)');
   root.style.setProperty(
     '--glass-shadow',
     dark
-      ? '0 8px 40px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08)'
+      ? '0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.32)'
       : '0 4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.65)'
   );
   root.style.setProperty('--text-on-surface-input', contrastTextOn(surfaceInput));
@@ -98,8 +103,11 @@ export function applyThemeSettings(settings: ThemeSettings = loadThemeSettings()
   root.style.setProperty('--accent', accent);
   root.style.setProperty('--accent-dim', hexToRgba(accent, dark ? 0.28 : 0.14));
   root.style.setProperty('--text-on-accent', contrastTextOn(accent));
-  root.style.setProperty('--shadow', dark ? '0 16px 48px rgba(0, 0, 0, 0.45)' : '0 16px 48px rgba(0, 0, 0, 0.08)');
-  root.style.setProperty('--shadow-hover', hexToRgba(glow, dark ? 0.2 : 0.12));
+  root.style.setProperty(
+    '--shadow',
+    dark ? '0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 32px rgba(0, 0, 0, 0.4)' : '0 16px 48px rgba(0, 0, 0, 0.08)'
+  );
+  root.style.setProperty('--shadow-hover', hexToRgba(glow, dark ? 0.14 : 0.12));
 
   root.style.setProperty('--theme-glow-strong', hexToRgba(glow, 0.18));
   root.style.setProperty('--theme-glow-mid', hexToRgba(glow, 0.06));
@@ -116,17 +124,38 @@ export function applyThemeSettings(settings: ThemeSettings = loadThemeSettings()
     root.style.setProperty('--theme-bg-image', `url(${JSON.stringify(s.backgroundImage)})`);
     root.style.setProperty('--theme-bg-size', s.backgroundImageSize);
     root.dataset.themeBgImage = '1';
+    root.dataset.themeBgSurface = s.backgroundSurfaceMode;
+    /* 有背景图时减弱鼠标光晕，避免与图片抢视觉 */
+    root.style.setProperty('--theme-glow-strong', hexToRgba(glow, 0.07));
+    root.style.setProperty('--theme-glow-mid', hexToRgba(glow, 0.025));
+    root.style.setProperty('--theme-grid', hexToRgba(glow, 0.04));
+    root.style.setProperty('--theme-orb-1', hexToRgba(glow, 0.16));
+    root.style.setProperty('--theme-orb-2', hexToRgba(glow, 0.1));
+    root.style.setProperty('--theme-orb-3', hexToRgba(glow, 0.12));
+    if (s.backgroundImageTextMode !== 'auto') {
+      const imageDark = s.backgroundImageTextMode === 'light';
+      root.dataset.themeBgTone = imageDark ? 'dark' : 'light';
+      applyImageTonePalette(root, buildImageTonePalette(s.backgroundColor, imageDark));
+    }
     void applyBackgroundImageTone(
       s.backgroundImage,
       s.backgroundColor,
       s.backgroundImageOpacity,
+      s.backgroundImageTextMode,
       generation
     );
   } else {
     root.style.removeProperty('--theme-bg-image');
     root.style.removeProperty('--theme-bg-size');
     delete root.dataset.themeBgImage;
+    delete root.dataset.themeBgSurface;
     delete root.dataset.themeBgTone;
+    root.style.setProperty('--theme-glow-strong', hexToRgba(glow, 0.18));
+    root.style.setProperty('--theme-glow-mid', hexToRgba(glow, 0.06));
+    root.style.setProperty('--theme-grid', hexToRgba(glow, 0.07));
+    root.style.setProperty('--theme-orb-1', hexToRgba(glow, 0.45));
+    root.style.setProperty('--theme-orb-2', hexToRgba(glow, 0.28));
+    root.style.setProperty('--theme-orb-3', hexToRgba(glow, 0.3));
     root.style.removeProperty('--tab-bg');
     root.style.removeProperty('--tab-bg-active');
     root.style.removeProperty('--tab-text');
@@ -164,12 +193,11 @@ const INPUT_SOLID = 'rgba(255, 255, 255, 0.97)';
 
 /** 有背景图：高级简约磨砂玻璃 + 清晰文字层级 */
 function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePalette {
-  const themeDark = isDarkBackground(bgColor);
-
   if (imageDark) {
     const text = '#f5f4f0' as const;
-    const textMuted = '#e0dcd4';
-    const textSubtle = 'rgba(232, 228, 220, 0.88)';
+    const cardApprox = mixHexWithBlack(bgColor, 0.78);
+    const textMuted = contrastMutedOn(cardApprox, text);
+    const textSubtle = contrastSubtleOn(cardApprox, text);
 
     return {
       bgCard: tintedDarkGlass(bgColor, 0.46),
@@ -196,32 +224,33 @@ function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePa
     };
   }
 
-  const text = '#1c1b19';
-  const textMuted = '#4a4640';
-  const textSubtle = 'rgba(74, 70, 64, 0.88)';
+  const text = '#1c1b19' as const;
+  const cardApprox = mixHexWithWhite(bgColor, 0.08);
+  const textMuted = contrastMutedOn(cardApprox, text);
+  const textSubtle = contrastSubtleOn(cardApprox, text);
 
   return {
-    bgCard: tintedLightGlass(bgColor, 0.44),
-    headerBg: tintedLightGlass(bgColor, 0.56),
-    bgElevated: tintedLightGlass(bgColor, 0.58),
-    surfaceHeader: tintedLightGlass(bgColor, 0.56),
-    surfaceSidebar: tintedLightGlass(bgColor, 0.5),
-    surfaceEditor: tintedLightGlass(bgColor, 0.48),
+    bgCard: tintedLightGlass(bgColor, 0.72),
+    headerBg: tintedLightGlass(bgColor, 0.78),
+    bgElevated: tintedLightGlass(bgColor, 0.84),
+    surfaceHeader: tintedLightGlass(bgColor, 0.78),
+    surfaceSidebar: tintedLightGlass(bgColor, 0.74),
+    surfaceEditor: tintedLightGlass(bgColor, 0.7),
     surfacePreview: INPUT_SOLID,
-    surfaceInput: themeDark ? mixHexWithWhite(bgColor, 0.12) : INPUT_SOLID,
-    text: themeDark ? '#f5f4f0' : text,
-    textMuted: themeDark ? mixHexWithWhite(bgColor, 0.58) : textMuted,
-    textSubtle: themeDark ? 'rgba(245, 244, 240, 0.78)' : textSubtle,
+    surfaceInput: INPUT_SOLID,
+    text,
+    textMuted,
+    textSubtle,
     textOnSurfaceInput: '#1c1b19',
-    placeholder: themeDark ? 'rgba(245, 244, 240, 0.55)' : 'rgba(28, 27, 25, 0.48)',
-    border: themeDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.55)',
-    borderHover: themeDark ? 'rgba(255, 255, 255, 0.24)' : 'rgba(255, 255, 255, 0.72)',
+    placeholder: 'rgba(28, 27, 25, 0.48)',
+    border: 'rgba(0, 0, 0, 0.1)',
+    borderHover: 'rgba(0, 0, 0, 0.16)',
     glassShadow:
-      '0 4px 28px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72)',
-    tabBg: tintedLightGlass(bgColor, 0.4),
-    tabBgActive: tintedLightGlass(bgColor, 0.62),
-    tabText: themeDark ? mixHexWithWhite(bgColor, 0.55) : textMuted,
-    tabTextActive: themeDark ? '#f5f4f0' : text,
+      '0 4px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75)',
+    tabBg: tintedLightGlass(bgColor, 0.62),
+    tabBgActive: tintedLightGlass(bgColor, 0.88),
+    tabText: textMuted,
+    tabTextActive: text,
   };
 }
 
@@ -253,16 +282,25 @@ async function applyBackgroundImageTone(
   dataUrl: string,
   bgColor: string,
   opacity: number,
+  textMode: ThemeSettings['backgroundImageTextMode'],
   generation: number
 ): Promise<void> {
   const root = document.documentElement;
-  const imageLum = await analyzeImageLuminance(dataUrl);
+  const zones = await analyzeImageZoneLuminance(dataUrl);
   if (generation !== themeToneGeneration) return;
   if (root.dataset.themeBgImage !== '1') return;
   const baseLum = isDarkBackground(bgColor) ? 0.25 : 0.75;
   const weight = Math.min(100, Math.max(0, opacity)) / 100;
-  const effectiveLum = baseLum * (1 - weight) + imageLum * weight;
-  const imageDark = effectiveLum < 0.48;
+  const effectiveLum = baseLum * (1 - weight) + zones.uiEffective * weight;
+
+  let imageDark: boolean;
+  if (textMode === 'light') {
+    imageDark = true;
+  } else if (textMode === 'dark') {
+    imageDark = false;
+  } else {
+    imageDark = effectiveLum < 0.48;
+  }
 
   root.dataset.themeBgTone = imageDark ? 'dark' : 'light';
   applyImageTonePalette(root, buildImageTonePalette(bgColor, imageDark));
@@ -278,6 +316,12 @@ function normalizeTheme(parsed: Partial<ThemeSettings>): ThemeSettings {
     backgroundImageOpacity: Number.isFinite(opacity)
       ? Math.min(100, Math.max(0, Math.round(opacity)))
       : DEFAULT_THEME.backgroundImageOpacity,
+    backgroundSurfaceMode:
+      parsed.backgroundSurfaceMode === 'transparent' ? 'transparent' : 'glass',
+    backgroundImageTextMode:
+      parsed.backgroundImageTextMode === 'light' || parsed.backgroundImageTextMode === 'dark'
+        ? parsed.backgroundImageTextMode
+        : 'auto',
   };
 }
 

@@ -7,6 +7,7 @@ export type CherryConstructor = new (options: Record<string, unknown>) => Cherry
 
 export interface CherryPreviewerApi {
   scrollToLineNum: (lineNum: number | null, linePercent?: number) => void;
+  scrollToTop?: (scrollTop: number, behavior?: 'auto' | 'smooth' | 'instant') => void;
   highlightLine?: (lineNum: number) => void;
   setRealLayout?: (editorPct?: string, previewerPct?: string) => void;
   syncVirtualLayoutFromReal?: () => void;
@@ -16,6 +17,7 @@ export interface CherryInstance {
   getMarkdown(): string;
   setMarkdown(content: string, keepCursor?: boolean): void;
   destroy(): void;
+  setTheme?: (theme: string) => void;
   previewer?: CherryPreviewerApi;
 }
 

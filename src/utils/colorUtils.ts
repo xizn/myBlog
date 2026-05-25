@@ -106,6 +106,25 @@ export function contrastMutedOn(
   return '#f5f4f0';
 }
 
+/** 辅助/元信息文字色（略淡，仍保证可读对比度 ≥ 3.5:1） */
+export function contrastSubtleOn(
+  hex: string,
+  primaryText?: '#1c1b19' | '#f5f4f0'
+): string {
+  const primary = primaryText ?? contrastTextOn(hex);
+  const minRatio = 3.5;
+  if (primary === '#1c1b19') {
+    for (const color of ['#6e6962', '#5a554e', '#4a4844', '#3d3b38']) {
+      if (contrastRatio(color, hex) >= minRatio) return color;
+    }
+    return contrastMutedOn(hex, primary);
+  }
+  for (const color of ['#d8d4cc', '#c8c4bc', '#eae6de', '#e2ded6', '#f0ece4']) {
+    if (contrastRatio(color, hex) >= minRatio) return color;
+  }
+  return contrastMutedOn(hex, primary);
+}
+
 /** 深色磨砂玻璃（带轻微主题色调） */
 export function tintedDarkGlass(bgColor: string, alpha: number): string {
   const rgb = parseHexColor(bgColor);
