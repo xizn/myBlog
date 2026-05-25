@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AiFormatButton } from '@/components/form/AiFormatButton';
 import { MarkdownHint } from '@/components/form/MarkdownHint';
+import {
+  formatReferenceMarkdown,
+  NoteReferencePicker,
+  type ReferenceTarget,
+} from '@/components/form/NoteReferencePicker';
 import { ImageZoomLightbox } from '@/components/common/ImageZoomLightbox';
 import { loadCherryMarkdown, type CherryInstance } from '@/utils/cherryMarkdownLoader';
 import {
@@ -11,6 +17,7 @@ import {
 import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
 import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
+import { mountCherryNoteLinkButton } from '@/utils/cherryNoteLinkButton';
 import {
   findTextMatches,
   offsetToLineCol,
@@ -32,10 +39,13 @@ export function MarkdownSplitEditor({
   noteTitle,
   disabled,
 }: MarkdownSplitEditorProps) {
+  const navigate = useNavigate();
   const reactId = useId().replace(/:/g, '');
   const editorId = `cherry-md-${reactId}`;
   const cherryRef = useRef<CherryInstance | null>(null);
   const syncingRef = useRef(false);
+  const disabledRef = useRef(disabled);
+  disabledRef.current = disabled;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +57,7 @@ export function MarkdownSplitEditor({
   const [cursorLine, setCursorLine] = useState(1);
   const [cursorCol, setCursorCol] = useState(1);
   const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
+  const [refPickerOpen, setRefPickerOpen] = useState(false);
 
   const matches = useMemo(
     () => findTextMatches(value, searchQuery),
@@ -227,7 +238,25 @@ export function MarkdownSplitEditor({
     if (!preview) return;
 
     const onPreviewClick = (e: Event) => {
-      const img = (e.target as HTMLElement).closest('img');
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor?.href) {
+        try {
+          const url = new URL(anchor.href, window.location.origin);
+          const internal =
+            url.origin === window.location.origin &&
+            (/^\/learning\/[^/]+$/.test(url.pathname) || /^\/agents\/[^/]+$/.test(url.pathname));
+          if (internal) {
+            e.preventDefault();
+            navigate(url.pathname);
+            return;
+          }
+        } catch {
+          /* ignore malformed href */
+        }
+      }
+
+      const img = target.closest('img');
       if (!img?.src) return;
       setZoomImage({ src: img.src, alt: img.alt || '预览图片' });
     };
@@ -239,7 +268,7 @@ export function MarkdownSplitEditor({
     });
 
     return () => preview.removeEventListener('click', onPreviewClick);
-  }, [ready, editorId, value]);
+  }, [ready, editorId, value, navigate]);
 
   const applyAiMarkdown = (markdown: string) => {
     const cherry = cherryRef.current;
@@ -249,6 +278,37 @@ export function MarkdownSplitEditor({
     syncingRef.current = false;
     onChangeRef.current(markdown);
   };
+
+  const handleReferenceSelect = useCallback(
+    (ref: ReferenceTarget) => {
+      setRefPickerOpen(false);
+      const snippet = formatReferenceMarkdown(ref);
+      const cm = getCodeMirrorFromHost(editorId);
+      if (cm) {
+        cm.replaceSelection(snippet);
+        cm.focus();
+        onChangeRef.current(cm.getValue());
+        return;
+      }
+      onChangeRef.current(`${value}${snippet}`);
+    },
+    [editorId, value]
+  );
+
+  useEffect(() => {
+    if (!ready) return;
+    return mountCherryNoteLinkButton(editorId, () => {
+      if (disabledRef.current) return;
+      setRefPickerOpen(true);
+    });
+  }, [ready, editorId]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const host = document.getElementById(editorId);
+    const btn = host?.querySelector('.cherry-toolbar-noteLink');
+    btn?.classList.toggle('disabled', Boolean(disabled));
+  }, [disabled, ready, editorId]);
 
   const searchCountLabel =
     searchQuery.trim() === ''
@@ -343,6 +403,12 @@ export function MarkdownSplitEditor({
           onClose={() => setZoomImage(null)}
         />
       )}
+
+      <NoteReferencePicker
+        open={refPickerOpen}
+        onClose={() => setRefPickerOpen(false)}
+        onSelect={handleReferenceSelect}
+      />
     </div>
   );
 }

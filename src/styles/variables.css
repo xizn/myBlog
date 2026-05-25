@@ -4,6 +4,11 @@
   --bg-card: rgba(255, 255, 255, 0.82);
   --border: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(0, 0, 0, 0.14);
+  --divider: rgba(0, 0, 0, 0.12);
+  --btn-glass-bg: rgba(255, 255, 255, 0.72);
+  --btn-glass-bg-hover: rgba(255, 255, 255, 0.88);
+  --btn-glass-border: rgba(0, 0, 0, 0.12);
+  --btn-glass-text: #1c1b19;
   --text: #1c1b19;
   --text-muted: #5a554e;
   --text-subtle: #6e6962;

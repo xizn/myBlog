@@ -2,6 +2,8 @@
 export type CodeMirrorEditor = {
   getValue: () => string;
   setSelection: (from: { line: number; ch: number }, to?: { line: number; ch: number }) => void;
+  replaceSelection: (text: string) => void;
+  focus: () => void;
   scrollIntoView: (pos?: { line: number; ch: number }, margin?: number) => void;
   on: (event: string, handler: () => void) => void;
   off: (event: string, handler: () => void) => void;

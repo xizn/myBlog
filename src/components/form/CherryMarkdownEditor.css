@@ -56,6 +56,28 @@
   max-width: 100% !important;
 }
 
+.md-split-editor--cherry .cherry-toolbar-button.cherry-toolbar-noteLink {
+  font-size: 14px;
+  line-height: 38px;
+  padding: 0 8px;
+  user-select: none;
+}
+
+.md-split-editor--cherry .cherry-toolbar-button.cherry-toolbar-noteLink.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar-button.cherry-toolbar-noteLink {
+  color: var(--text-muted);
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar-button.cherry-toolbar-noteLink:hover:not(.disabled) {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .md-split-editor--cherry .cherry .cherry-editor,
 .md-split-editor--cherry .cherry .cherry-previewer {
   box-sizing: border-box !important;
@@ -289,52 +311,52 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-
   color: #b42318;
 }
 
-/* 编辑器语法/预览：固定可读配色，不跟随光晕或 accent */
-.md-split-editor--cherry .cm-s-default .cm-header {
+/* 浅色主题：编辑器语法/预览固定可读配色 */
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cm-s-default .cm-header {
   color: #1c1b19 !important;
   font-weight: 700;
 }
 
-.md-split-editor--cherry .cm-s-default .cm-link,
-.md-split-editor--cherry .cm-s-default .cm-url {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cm-s-default .cm-link,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cm-s-default .cm-url {
   color: #2563eb !important;
 }
 
-.md-split-editor--cherry .cm-s-default .cm-string {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cm-s-default .cm-string {
   color: #0f766e !important;
 }
 
-.md-split-editor--cherry .cm-s-default .cm-comment {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cm-s-default .cm-comment {
   color: #6b7280 !important;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown {
   color: #1c1b19;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h1,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h2,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h3,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h4,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h5,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown h6 {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h1,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h2,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h3,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h4,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h5,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown h6 {
   color: #1c1b19;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown p,
-.md-split-editor--cherry .cherry-previewer .cherry-markdown li {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown p,
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown li {
   color: #4a4640;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown a {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown a {
   color: #2563eb;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown a.anchor:before {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown a.anchor:before {
   color: #6b7280;
 }
 
-.md-split-editor--cherry .cherry-previewer .cherry-markdown :not(pre) > code {
+html:not([data-theme-mode='dark']) .md-split-editor--cherry .cherry-previewer .cherry-markdown :not(pre) > code {
   color: #9a3412;
   background-color: #f5f4f0;
 }

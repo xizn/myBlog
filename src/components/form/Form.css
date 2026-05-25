@@ -118,7 +118,28 @@
   gap: 0.65rem;
   margin-top: 1.25rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--divider);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.form-actions .btn--primary {
+  background: var(--btn-glass-bg);
+  color: var(--btn-glass-text);
+  border: 1px solid var(--btn-glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+}
+
+.form-actions .btn--primary:hover:not(:disabled) {
+  background: var(--btn-glass-bg-hover);
+  border-color: var(--border-hover);
+  filter: none;
+}
+
+.form-actions .btn--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .form-actions--bar {

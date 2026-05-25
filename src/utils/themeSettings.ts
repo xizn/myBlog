@@ -83,6 +83,20 @@ export function applyThemeSettings(settings: ThemeSettings = loadThemeSettings()
   root.style.setProperty('--bg-card', bgCard);
   root.style.setProperty('--border', dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)');
   root.style.setProperty('--border-hover', dark ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.16)');
+  root.style.setProperty('--divider', dark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.14)');
+  root.style.setProperty(
+    '--btn-glass-bg',
+    dark ? 'rgba(255, 255, 255, 0.12)' : hexToRgba(mixHexWithWhite(bg, 0.04), 0.76)
+  );
+  root.style.setProperty(
+    '--btn-glass-bg-hover',
+    dark ? 'rgba(255, 255, 255, 0.18)' : hexToRgba(mixHexWithWhite(bg, 0.06), 0.9)
+  );
+  root.style.setProperty(
+    '--btn-glass-border',
+    dark ? 'rgba(255, 255, 255, 0.22)' : hexToRgba(accent, 0.22)
+  );
+  root.style.setProperty('--btn-glass-text', text);
   root.style.setProperty('--text', text);
   root.style.setProperty('--text-muted', textMuted);
   root.style.setProperty('--text-subtle', contrastSubtleOn(bg, text));
@@ -182,6 +196,11 @@ interface ImageTonePalette {
   placeholder: string;
   border: string;
   borderHover: string;
+  divider: string;
+  btnGlassBg: string;
+  btnGlassBgHover: string;
+  btnGlassBorder: string;
+  btnGlassText: string;
   glassShadow: string;
   tabBg: string;
   tabBgActive: string;
@@ -215,6 +234,11 @@ function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePa
       placeholder: 'rgba(250, 249, 247, 0.58)',
       border: 'rgba(255, 255, 255, 0.16)',
       borderHover: 'rgba(255, 255, 255, 0.28)',
+      divider: 'rgba(255, 255, 255, 0.24)',
+      btnGlassBg: 'rgba(255, 255, 255, 0.14)',
+      btnGlassBgHover: 'rgba(255, 255, 255, 0.22)',
+      btnGlassBorder: 'rgba(255, 255, 255, 0.26)',
+      btnGlassText: text,
       glassShadow:
         '0 8px 40px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       tabBg: tintedDarkGlass(bgColor, 0.38),
@@ -245,6 +269,11 @@ function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePa
     placeholder: 'rgba(28, 27, 25, 0.48)',
     border: 'rgba(0, 0, 0, 0.1)',
     borderHover: 'rgba(0, 0, 0, 0.16)',
+    divider: 'rgba(0, 0, 0, 0.14)',
+    btnGlassBg: tintedLightGlass(bgColor, 0.82),
+    btnGlassBgHover: tintedLightGlass(bgColor, 0.92),
+    btnGlassBorder: 'rgba(0, 0, 0, 0.14)',
+    btnGlassText: text,
     glassShadow:
       '0 4px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75)',
     tabBg: tintedLightGlass(bgColor, 0.62),
@@ -270,6 +299,11 @@ function applyImageTonePalette(root: HTMLElement, palette: ImageTonePalette): vo
   root.style.setProperty('--placeholder', palette.placeholder);
   root.style.setProperty('--border', palette.border);
   root.style.setProperty('--border-hover', palette.borderHover);
+  root.style.setProperty('--divider', palette.divider);
+  root.style.setProperty('--btn-glass-bg', palette.btnGlassBg);
+  root.style.setProperty('--btn-glass-bg-hover', palette.btnGlassBgHover);
+  root.style.setProperty('--btn-glass-border', palette.btnGlassBorder);
+  root.style.setProperty('--btn-glass-text', palette.btnGlassText);
   root.style.setProperty('--glass-shadow', palette.glassShadow);
   root.style.setProperty('--tab-bg', palette.tabBg);
   root.style.setProperty('--tab-bg-active', palette.tabBgActive);
