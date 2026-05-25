@@ -1,0 +1,76 @@
+.export-pdf-host {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 760px;
+  padding: 2.5rem 3rem;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #1c1b19;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.export-pdf-host--rich {
+  color: #2a2825;
+}
+
+.export-doc-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+  color: #1c1b19;
+  border-bottom: 2px solid #e8e4dc;
+  padding-bottom: 0.5rem;
+}
+
+.export-doc-sep {
+  border: none;
+  border-top: 1px solid #e8e4dc;
+  margin: 1.75rem 0;
+}
+
+.export-pdf-host--rich .export-markdown-body {
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.export-pdf-host--rich .markdown-content h1,
+.export-pdf-host--rich .markdown-content h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #1c1b19;
+  margin-top: 1.5rem;
+}
+
+.export-pdf-host--rich .markdown-content h2 {
+  font-size: 1.45rem;
+  border-bottom: 1px solid #ebe6de;
+  padding-bottom: 0.35rem;
+}
+
+.export-pdf-host--rich .markdown-content h3 {
+  font-size: 1.1rem;
+  color: #3d3a34;
+}
+
+.export-pdf-host--rich .markdown-content p,
+.export-pdf-host--rich .markdown-content li {
+  color: #4a4640;
+}
+
+.export-pdf-host--rich .markdown-content code {
+  background: #f5f3ef;
+  border: 1px solid #e5e0d6;
+  color: #8a6d3b;
+}
+
+.export-pdf-host--rich .markdown-content pre {
+  background: #f8f7f4;
+  border: 1px solid #e5e0d6;
+}
+
+.export-pdf-host--rich .markdown-content a {
+  color: #9a7b4a;
+}

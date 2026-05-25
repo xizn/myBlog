@@ -1,0 +1,56 @@
+/* Cherry 编辑器区域：对齐 indexdoc-editor 分栏体验 */
+.md-split-editor--cherry .md-split-editor__workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-editor);
+}
+
+.md-split-editor__cherry-root {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.md-split-editor__cherry-root--ready {
+  opacity: 1;
+}
+
+.md-split-editor__cherry-root--disabled {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.md-split-editor--cherry .cherry {
+  height: 100% !important;
+  min-height: 100%;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.md-split-editor--cherry .cherry .cherry-editor,
+.md-split-editor--cherry .cherry .cherry-previewer {
+  background: var(--surface-editor) !important;
+}
+
+.md-split-editor--cherry .cherry .CodeMirror {
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+
+.md-split-editor__loading,
+.md-split-editor__load-error {
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.md-split-editor__load-error {
+  color: #b42318;
+}

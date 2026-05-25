@@ -1,0 +1,46 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Bug 修复：先验证，再答复
+
+## 硬性要求
+
+修复 Bug 或用户反馈「不生效」类问题时，**在给出最终答复之前**必须完成验证。未跑验证就写「已修复」「应该好了」视为不合格。
+
+## 标准流程
+
+1. **复现**：按用户描述的操作路径复现（浏览器或 Electron，注明环境）。
+2. **改代码**：最小改动，对齐本项目既有模式（见 `react-form-navigation-hooks.mdc` 等）。
+3. **构建**：`npm run build`，零 TS/构建错误。
+4. **验证**（至少一项，优先能覆盖用户场景）：
+   - 有脚本：`npm run verify:tabs`（多窗口草稿切换）
+   - UI/路由类：Playwright 或 `npm run dev` 后按用户步骤点一遍
+   - API/存储类：针对性脚本或控制台检查读写结果
+5. **再回复**：说明根因、改了什么、**怎么测的、测的结果**。
+
+## 回复必须包含
+
+- **根因**（一句话，区分「存储键冲突」vs「React 状态/路由」等）
+- **验证方式**（命令或操作步骤）
+- **验证结果**（通过 / 失败；失败则继续修，不交付半成品）
+
+## 本项目高频 Bug 检查清单
+
+| 现象 | 优先怀疑 | 快速验证 |
+|---|----|----|
+| URL 变、表单内容不变 | 单实例表单 + `initial` 反复重置 + `activeDraftId` 滞后 | 开两个草稿填不同标题 → 切标签 |
+| 多篇草稿互相覆盖 | 仍写旧单键 `myblog_draft_*` | 检查 `learningDrafts` / `agentDrafts` 是否数组存储 |
+| 点击/导航无响应 | `useCallback` 依赖整个 workspace 对象 → 死循环 | 对比 `AgentDraftPanel` 的稳定依赖写法 |
+
+## 禁止
+
+- 只改 `key={pathname}` / `Outlet key` 就宣称解决，未点标签切换验证
+- 把「可能是缓存竞争」当结论，未区分 storage 键冲突 vs React 重渲染
+- 验证失败仍让用户「你先试试」
+
+## 示例（合格答复片段）
+
+> 根因：切换标签时父组件重渲染，`LearningForm` 的 `useEffect(..., [initial])` 用新 parse 对象重置了输入框。  
+> 验证：`npm run build` 通过；`npm run verify:tabs` 输出 OK（学习笔记 + Agent 各切两次标签标题正确）。

@@ -1,0 +1,34 @@
+.page-header--row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-header--row .page-header__desc {
+  margin-bottom: 0;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.detail-actions--top {
+  float: right;
+  margin-top: 0;
+  align-items: center;
+}
+
+.btn--danger-outline {
+  border: 1px solid rgba(196, 92, 92, 0.5) !important;
+  color: #c45c5c !important;
+}
+
+.btn--danger-outline:hover {
+  background: rgba(196, 92, 92, 0.1) !important;
+  border-color: #c45c5c !important;
+}

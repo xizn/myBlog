@@ -1,0 +1,78 @@
+---
+description: 表单页导航失效、URL 变但页面不更新、useCallback 依赖导致无限重渲染的成因与修复
+globs: src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# 表单页导航与 Hook 依赖
+
+## 典型现象（本项目曾出现）
+
+1. 进入「新建学习记录」后，顶栏、返回、取消等**所有跳转都失效**
+2. 地址栏 URL 已变，但**页面内容仍停在表单**
+3. 仅 Agent 页正常、学习记录新建页必现 → 优先怀疑**该页特有的 Hook 依赖**，而非路由配置本身
+
+## 根因一：无限重渲染（最严重）
+
+`useFormWorkspace` 每次渲染返回新对象，若 `useCallback(..., [workspace])` 依赖整个对象，会导致：
+
+```
+LearningForm useEffect([values, onValuesChange])
+  → onValuesChange → setPreview → 父组件重渲染
+  → 新的 workspace 对象 → 新的 onValuesChange
+  → useEffect 再次执行 → 死循环，主线程占满，点击/路由全部无响应
+```
+
+**禁止**
+
+```tsx
+const workspace = useFormWorkspace(key);
+const handleValuesChange = useCallback((v) => {
+  workspace.scheduleDraftSave(v);
+}, [workspace]); // ❌ 对象引用每轮都变
+```
+
+**推荐**
+
+```tsx
+const { scheduleDraftSave, persistDraft, getDraft } = useFormWorkspace(key);
+const handleValuesChange = useCallback((v) => {
+  scheduleDraftSave(v);
+}, [scheduleDraftSave]); // ✅ 依赖 useCallback 包过的稳定函数
+
+// Hook 内用 useMemo 包裹返回值
+return useMemo(() => ({ scheduleDraftSave, ... }), [deps]);
+```
+
+子表单同步父级时，用 **ref 存回调**，避免 `onValuesChange` 进 effect 依赖：
+
+```tsx
+const onValuesChangeRef = useRef(onValuesChange);
+onValuesChangeRef.current = onValuesChange;
+useEffect(() => { onValuesChangeRef.current?.(values); }, [values]); // ✅ 仅跟 values
+```
+
+## 根因二：路由已变但 Outlet 不更新
+
+- 路由配置用 `element: <Page />` 在模块加载时创建实例，切换时可能不重挂载 → 改用 **`Component: Page`**
+- `<Outlet />` 无 `key` 时 React 可能复用子树 → 使用 `const { pathname, key } = useLocation()`，`<Outlet key={\`${pathname}-${key}\`} />`
+
+## 根因三：点击被挡或路由未触发
+
+- 表单头 `h1` 使用 `flex: 1` 可能盖住「返回」→ `pointer-events: none` 给标题，返回按钮 `z-index` 提高
+- 返回用 `<button onClick={() => navigate(backTo)}>` 或 `<Link to={backTo}>`，目标路径用 **`/learning` 绝对路径**，并 `useMemo` 计算 `backTo`
+- `MainLayout` 中 `Outlet` 的 key 用 **`pathname`（来自 `useLocation()`）**，勿写未定义的 `location.pathname`
+
+## 排查顺序
+
+1. 打开 React DevTools → 是否某组件疯狂重渲染？→ 查 `useCallback` / `useEffect` 依赖是否含**每轮新建的对象**
+2. URL 变、画面不变？→ `Component` + `Outlet key`
+3. 仅某个表单页？→ 对比正常页（如 `AgentFormPage`）的 `handleValuesChange` 依赖写法
+4. 区分 **页面「返回」** 与 **浏览器后退**；`navigate(..., { replace: true })` 后浏览器后退可能无效，属预期
+
+## 启发
+
+- 自定义 Hook 若返回对象，默认 **`useMemo` 稳定引用**，或要求调用方只解构内部稳定方法
+- 「全站按钮都坏了」不一定是 CSS 遮罩，常见是 **JS 死循环拖死主线程**
+- 新表单页应对齐 `AgentFormPage` 模式：稳定依赖 + ref 传回调 + 明确 `backTo`
+- 命名：`FormWorkspace` = 全屏表单 UI；`useFormWorkspace` = 本地草稿逻辑，勿把整个返回值放进依赖数组

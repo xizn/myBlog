@@ -1,0 +1,35 @@
+:root {
+  --bg: #f8f7f4;
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.14);
+  --text: #1c1b19;
+  --text-muted: #6e6a63;
+  --accent: #9a7b4a;
+  --accent-dim: rgba(154, 123, 74, 0.12);
+  --text-on-accent: #ffffff;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 20px 56px rgba(154, 123, 74, 0.12);
+  --max-width: 1120px;
+  --header-h: 72px;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --header-bg: rgba(248, 247, 244, 0.82);
+  --theme-glow-strong: rgba(196, 165, 116, 0.18);
+  --theme-glow-mid: rgba(196, 165, 116, 0.06);
+  --theme-grid: rgba(154, 123, 74, 0.09);
+  --theme-orb-1: rgba(212, 190, 150, 0.45);
+  --theme-orb-2: rgba(180, 200, 220, 0.35);
+  --theme-orb-3: rgba(196, 165, 116, 0.3);
+  --theme-bg-image-opacity: 0.35;
+  --surface-input: #ffffff;
+  --surface-header: rgba(248, 247, 244, 0.92);
+  --surface-sidebar: rgba(248, 247, 244, 0.75);
+  --surface-editor: #f3f2ef;
+  --surface-preview: #ffffff;
+}

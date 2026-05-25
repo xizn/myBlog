@@ -1,0 +1,85 @@
+/**
+ * 背景图模式下，内容区磨砂面板与文字对比（与首页 home-section 同一套规则）
+ */
+
+html[data-theme-bg-image='1'] .page-header,
+html[data-theme-bg-image='1'] .learning-detail,
+html[data-theme-bg-image='1'] .agent-detail {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+html[data-theme-bg-image='1'] .page-header {
+  margin-bottom: 2rem;
+}
+
+html[data-theme-bg-image='1'] .learning-detail,
+html[data-theme-bg-image='1'] .agent-detail {
+  margin-bottom: 2rem;
+}
+
+html[data-theme-bg-image='1'] .home-section {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+html[data-theme-bg-image='1'] .page-header__title,
+html[data-theme-bg-image='1'] .home-hero__title,
+html[data-theme-bg-image='1'] .home-section__title,
+html[data-theme-bg-image='1'] .learning-detail__title,
+html[data-theme-bg-image='1'] .agent-detail__title {
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .page-header__title,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__title,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-section__title,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__title,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .agent-detail__title {
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme-bg-image='1'] .list-search__field {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+html[data-theme-bg-image='1'] .list-search__field:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-hover);
+}
+
+html[data-theme-bg-image='1'] .list-search__field:focus-within {
+  background: var(--bg-elevated);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+html[data-theme-bg-image='1'] .learning-page__filters,
+html[data-theme-bg-image='1'] .agents-page__filters {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+html[data-theme-bg-image='1'] .empty-state {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .page-header__desc,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__desc,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-section__more,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-card__summary,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__summary,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .agent-detail__summary {
+  color: var(--text-muted);
+}

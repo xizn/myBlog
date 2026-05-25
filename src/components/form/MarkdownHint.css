@@ -1,0 +1,104 @@
+.form-label-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.form-label-row label {
+  margin-bottom: 0;
+}
+
+.markdown-hint {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.markdown-hint__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: help;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.markdown-hint__trigger:hover,
+.markdown-hint__trigger:focus-visible {
+  color: var(--accent);
+  border-color: rgba(154, 123, 74, 0.35);
+  background: var(--accent-dim);
+  outline: none;
+}
+
+.markdown-hint__panel--portal {
+  position: fixed;
+  z-index: 500;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  width: max-content;
+  min-width: 240px;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+
+.markdown-hint__title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-hint__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.markdown-hint__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.65rem;
+  align-items: baseline;
+}
+
+.markdown-hint__syntax {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.72rem;
+  padding: 0.12rem 0.35rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.markdown-hint__desc {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+

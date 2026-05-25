@@ -1,0 +1,51 @@
+---
+description: 表单下拉框（Select）样式与实现规范，新建/编辑页必须使用自定义 Select 组件
+globs: src/components/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# 下拉框样式规范
+
+## 禁止
+
+- 不要使用原生 `<select>` / `<option>`（系统弹层样式无法与站点统一）
+- 不要使用浏览器默认蓝色高亮选项
+
+## 必须使用
+
+- 组件：`src/components/common/Select.tsx`
+- 样式：`src/components/common/Select.css`（类名前缀 `ui-select`）
+
+## 视觉规范
+
+| 属性 | 值 |
+|------|-----|
+| 触发器 | 与 `input` 同高、同圆角 `var(--radius)`、边框 `var(--border)` |
+| 背景 | `var(--bg-elevated)` |
+| 聚焦/展开 | 边框 `var(--accent)` + 外发光 `box-shadow: 0 0 0 3px var(--accent-dim)` |
+| 菜单 | 圆角与触发器一致，阴影 `var(--shadow)`，内边距 `0.35rem` |
+| 选项悬停/选中 | 背景 `var(--accent-dim)`，文字 `var(--accent)` |
+| 箭头 | CSS 边框绘制，展开时旋转 |
+
+## 用法示例
+
+```tsx
+import { Select } from '@/components/common/Select';
+
+<Select
+  id="status"
+  value={values.status}
+  options={[
+    { value: 'active', label: '进行中' },
+    { value: 'wip', label: '开发中' },
+    { value: 'archived', label: '已归档' },
+  ]}
+  onChange={(v) => set('status', v as AgentProject['status'])}
+/>
+```
+
+## 交互
+
+- 点击外部或按 `Escape` 关闭
+- `role="listbox"` / `role="option"` 保持可访问性
+- 支持 `disabled`

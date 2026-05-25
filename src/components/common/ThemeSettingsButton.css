@@ -1,0 +1,115 @@
+.theme-settings-trigger {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  transition: color 0.2s, background 0.2s;
+}
+
+.theme-settings-trigger:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+}
+
+.theme-settings__box {
+  max-width: 28rem;
+}
+
+.theme-settings__label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.theme-settings__field {
+  margin-bottom: 0.75rem;
+}
+
+.theme-settings__presets {
+  margin-bottom: 1rem;
+}
+
+.theme-settings__preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.theme-settings__preset {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.theme-settings__preset:hover {
+  transform: scale(1.08);
+  border-color: var(--accent);
+}
+
+.theme-settings__color-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.theme-settings__color-row input[type='color'] {
+  width: 2.5rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.theme-settings__color-row input[type='text'] {
+  flex: 1;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: var(--surface-input);
+  color: var(--text);
+}
+
+.theme-settings__opacity {
+  margin-top: 0.5rem;
+}
+
+.theme-settings__image {
+  margin-bottom: 0.75rem;
+}
+
+.theme-settings__image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.theme-settings__size-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-input);
+  color: var(--text);
+}
+
+.theme-settings__file-input {
+  display: none;
+}
+
+.theme-settings__preview {
+  height: 4.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background-repeat: no-repeat;
+  background-position: center;
+}

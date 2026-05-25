@@ -1,0 +1,134 @@
+/* 全屏表单主体 */
+.form-body {
+  --form-control-height: 2.375rem;
+  width: 100%;
+  max-width: none;
+}
+
+/* 标题 + 开关：标签在上，输入与开关同一行同高 */
+.form-title-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-title-input-row > input {
+  flex: 1;
+  min-width: 0;
+  height: var(--form-control-height);
+  box-sizing: border-box;
+}
+
+.form-body__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1.25rem;
+  width: 100%;
+}
+
+.form-body__grid .form-field--full {
+  grid-column: 1 / -1;
+}
+
+.form-field {
+  margin-bottom: 0.75rem;
+}
+
+/* 仅字段标题 label，不影响 FormFlagToggle（开关也是 label） */
+.form-field > label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.02em;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--surface-input, var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-field--editor {
+  margin-bottom: 1rem;
+}
+
+.form-field--editor > label {
+  display: none;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.form-field textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.form-field--row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.form-checkbox input {
+  width: auto;
+  accent-color: var(--accent);
+}
+
+.form-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.form-error {
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #a33;
+  background: rgba(196, 92, 92, 0.1);
+  border: 1px solid rgba(196, 92, 92, 0.25);
+  border-radius: var(--radius);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.form-actions--bar {
+  width: 100%;
+  max-width: none;
+}
+
+@media (max-width: 720px) {
+  .form-body__grid,
+  .form-field--row {
+    grid-template-columns: 1fr;
+  }
+}

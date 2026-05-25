@@ -1,0 +1,115 @@
+.list-search {
+  margin-bottom: 1.5rem;
+}
+
+.list-search__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 460px;
+  padding: 0.35rem 0.65rem 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.list-search__field:hover {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.list-search__field:focus-within {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(154, 123, 74, 0.22);
+  box-shadow: 0 6px 24px rgba(154, 123, 74, 0.07);
+}
+
+.list-search__icon {
+  flex-shrink: 0;
+  width: 0.95rem;
+  height: 0.95rem;
+  opacity: 0.38;
+  background: currentColor;
+  color: var(--text-muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transition: opacity 0.2s;
+}
+
+.list-search__field:focus-within .list-search__icon {
+  opacity: 0.55;
+  color: var(--accent);
+}
+
+.list-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.15rem 0;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.list-search__input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.72;
+}
+
+.list-search__input:focus {
+  outline: none;
+}
+
+/* 隐藏 WebKit 搜索框默认清除按钮，使用自定义 */
+.list-search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.list-search__clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 300;
+  color: var(--text-muted);
+  border-radius: 50%;
+  opacity: 0.65;
+  transition:
+    opacity 0.2s,
+    color 0.2s,
+    background 0.2s;
+}
+
+.list-search__clear:hover {
+  opacity: 1;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.list-search__hint {
+  margin-top: 0.5rem;
+  margin-left: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  opacity: 0.85;
+}

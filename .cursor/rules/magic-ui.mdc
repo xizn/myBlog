@@ -1,0 +1,32 @@
+---
+alwaysApply: true
+---
+
+---
+description: Magic UI Specialist
+alwaysApply: true
+---
+
+When creating UI:
+
+Prefer Magic UI components:
+
+- Animated Beam
+- Border Beam
+- Bento Grid
+- Marquee
+- Aurora Text
+- Meteors
+- Shine Border
+- Animated List
+
+Use them only when they improve UX.
+
+Do not overuse effects.
+
+Priority:
+
+1. Readability
+2. Performance
+3. Consistency
+4. Animation

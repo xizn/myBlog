@@ -1,0 +1,114 @@
+.interactive-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.interactive-bg__image {
+  position: absolute;
+  inset: 0;
+  background-image: var(--theme-bg-image);
+  background-size: var(--theme-bg-size, cover);
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--theme-bg-image-opacity, 0.35);
+}
+
+html[data-theme-bg-image='1'] .interactive-bg__orb {
+  opacity: 0.25;
+}
+
+/* 细网格 */
+.interactive-bg__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--theme-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--theme-grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 90% 80% at var(--mouse-x) var(--mouse-y), black 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 80% at var(--mouse-x) var(--mouse-y),
+    black 0%,
+    transparent 72%
+  );
+}
+
+/* 鼠标跟随光晕 */
+.interactive-bg__glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  left: var(--mouse-x);
+  top: var(--mouse-y);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    var(--theme-glow-strong) 0%,
+    var(--theme-glow-mid) 35%,
+    transparent 65%
+  );
+  transition: left 0.4s ease-out, top 0.4s ease-out;
+}
+
+/* 漂浮光斑 */
+.interactive-bg__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: orb-float 18s ease-in-out infinite;
+}
+
+.interactive-bg__orb--1 {
+  width: 420px;
+  height: 420px;
+  top: -8%;
+  left: -5%;
+  background: var(--theme-orb-1);
+  animation-delay: 0s;
+}
+
+.interactive-bg__orb--2 {
+  width: 360px;
+  height: 360px;
+  bottom: 10%;
+  right: -8%;
+  background: var(--theme-orb-2);
+  animation-delay: -6s;
+  animation-duration: 22s;
+}
+
+.interactive-bg__orb--3 {
+  width: 280px;
+  height: 280px;
+  top: 45%;
+  left: 55%;
+  background: var(--theme-orb-3);
+  animation-delay: -12s;
+  animation-duration: 20s;
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(24px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-16px, 16px) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-bg__orb {
+    animation: none;
+  }
+  .interactive-bg__glow {
+    transition: none;
+  }
+}

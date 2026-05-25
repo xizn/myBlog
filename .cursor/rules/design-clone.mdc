@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+---
+description: Design Reference System
+alwaysApply: true
+---
+
+When user mentions:
+
+- Linear
+- Vercel
+- OpenAI
+- Stripe
+- Notion
+- Apple
+
+Analyze the design language:
+
+- spacing
+- hierarchy
+- typography
+- card design
+- animation
+
+Then recreate the style using:
+
+- shadcn/ui
+- Magic UI
+- Tailwind CSS
+
+Do not copy branding.
+
+Only imitate design language.

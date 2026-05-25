@@ -1,0 +1,63 @@
+{
+  "name": "my-blog",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "desktop": "electron .",
+    "pack:win": "electron-builder --win portable",
+    "pack:desktop": "powershell -ExecutionPolicy Bypass -File scripts/pack-desktop.ps1",
+    "verify:tabs": "node scripts/verify-draft-tabs.mjs",
+    "verify:markdown-helpers": "node scripts/verify-markdown-helpers.mjs",
+    "sync:cherry": "powershell -ExecutionPolicy Bypass -File scripts/sync-cherry-from-indexdoc.ps1",
+    "verify:draft-batch": "node scripts/verify-draft-batch-delete.mjs"
+  },
+  "dependencies": {
+    "docx": "^9.6.1",
+    "github-slugger": "^2.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.6.2",
+    "rehype-slug": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.5.2",
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8",
+    "playwright": "^1.52.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  },
+  "build": {
+    "appId": "studio.myblog",
+    "productName": "Studio Blog",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Studio-Blog-${version}-portable.exe"
+    }
+  }
+}

@@ -1,0 +1,112 @@
+.form-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.form-workspace__inner {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-left: clamp(2.5rem, 8vw, 7rem);
+  padding-right: clamp(2.5rem, 8vw, 7rem);
+  box-sizing: border-box;
+}
+
+.form-workspace__header {
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-header);
+  backdrop-filter: blur(12px);
+}
+
+.form-workspace__header .form-workspace__inner {
+  padding-left: clamp(3rem, 10vw, 7.5rem);
+}
+
+.form-workspace__header-row {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.2rem 0;
+}
+
+.form-workspace__back {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.form-workspace__back:hover {
+  color: var(--accent);
+}
+
+.form-workspace__title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+.form-workspace__header-row:has(.form-editor-tabs) .form-workspace__back {
+  margin-right: 0.25rem;
+}
+
+.form-workspace__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.form-workspace__main {
+  min-height: 0;
+  padding: 1rem 0 1.25rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 960px) {
+  .form-workspace__body {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .form-workspace__inner {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .form-workspace__header .form-workspace__inner {
+    padding-left: 1.75rem;
+  }
+
+  .form-workspace__header-row {
+    padding: 1rem 0;
+  }
+}

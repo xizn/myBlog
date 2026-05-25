@@ -1,0 +1,40 @@
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.5rem;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.back-to-top:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.back-to-top__icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .back-to-top {
+    right: 0.85rem;
+    bottom: 1rem;
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+}

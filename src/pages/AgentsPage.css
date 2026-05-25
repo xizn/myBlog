@@ -1,0 +1,33 @@
+.agents-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.agents-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.page-header {
+  margin-bottom: 2.5rem;
+}
+
+.page-header__title {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.page-header__desc {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 48ch;
+}
+
+.page-loading {
+  color: var(--text-muted);
+}
