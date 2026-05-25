@@ -281,7 +281,7 @@
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--text);
+  color: var(--text-on-surface-input, var(--text));
   background: var(--surface-input);
   border: 1px solid var(--border);
   border-radius: 10px;

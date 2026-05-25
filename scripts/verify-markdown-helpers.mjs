@@ -27,6 +27,13 @@ assert(modalCss.includes('translateX(100%)'), 'history drawer slide animation mi
 const cherryCss = readFileSync(join(root, 'src/components/form/CherryMarkdownEditor.css'), 'utf8');
 assert(cherryCss.includes('flex-flow: row wrap'), 'cherry should use row wrap split layout');
 assert(!cherryCss.includes('flex-direction: column !important'), 'cherry must not force column layout');
+assert(cherryCss.includes('.cherry-drag'), 'cherry drag line should be hidden in blog editor');
+assert(!cherryCss.includes('width: 50% !important'), 'do not override cherry pane widths');
+assert(cherryCss.includes('background: #ffffff'), 'editor panes use opaque white');
+assert(
+  readFileSync(join(root, 'src/utils/cherryEditorPreviewSync.ts'), 'utf8').includes('bindCherryEditorPreviewScroll'),
+  'explicit editor-preview scroll sync missing'
+);
 
 const editorSrc = readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.tsx'), 'utf8');
 assert(editorSrc.includes('loadCherryMarkdown'), 'MarkdownSplitEditor should use Cherry');

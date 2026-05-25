@@ -80,7 +80,7 @@
   padding: 0;
   font-size: 1rem;
   line-height: 1;
-  color: var(--text-muted);
+  color: var(--tab-text, var(--text-muted));
   background: none;
   border: none;
   border-left: 1px solid var(--border);
@@ -89,8 +89,42 @@
 }
 
 .form-editor-tab__close:hover {
+  color: var(--tab-text-active, var(--text));
+  background: rgba(0, 0, 0, 0.06);
+}
+
+html[data-theme-bg-tone='dark'] .form-editor-tab__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.form-editor-tabs__history.btn--ghost,
+.form-editor-tabs__new.btn--outline {
   color: var(--text);
-  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--border-hover);
+}
+
+html[data-theme-bg-image='1'] .form-editor-tabs__new.btn--outline {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme-bg-tone='dark'] .form-editor-tabs__new.btn--outline {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f4f0;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+html[data-theme-bg-tone='dark'] .form-editor-tabs__new.btn--outline:hover {
+  color: #faf9f7;
+  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme-bg-tone='dark'] .form-editor-tabs__history.btn--ghost {
+  color: #e0dcd4;
+}
+
+html[data-theme-bg-tone='dark'] .form-editor-tabs__history.btn--ghost:hover {
+  color: #f5f4f0;
 }
 
 .form-editor-tabs__history {

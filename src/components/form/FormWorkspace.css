@@ -91,6 +91,14 @@
   box-sizing: border-box;
 }
 
+.form-workspace__main > .form-workspace__inner {
+  max-width: min(920px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 @media (max-width: 960px) {
   .form-workspace__body {
     grid-template-columns: 1fr;

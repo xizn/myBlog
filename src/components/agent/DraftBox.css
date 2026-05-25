@@ -161,7 +161,7 @@
 
 .draft-box__item-meta {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-subtle, var(--text-muted));
 }
 
 .draft-box__item-actions {

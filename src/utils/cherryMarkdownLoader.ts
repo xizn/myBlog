@@ -5,10 +5,18 @@ const CHERRY_JS = '/vendor/cherry-markdown/cherry-markdown.js';
 
 export type CherryConstructor = new (options: Record<string, unknown>) => CherryInstance;
 
+export interface CherryPreviewerApi {
+  scrollToLineNum: (lineNum: number | null, linePercent?: number) => void;
+  highlightLine?: (lineNum: number) => void;
+  setRealLayout?: (editorPct?: string, previewerPct?: string) => void;
+  syncVirtualLayoutFromReal?: () => void;
+}
+
 export interface CherryInstance {
   getMarkdown(): string;
   setMarkdown(content: string, keepCursor?: boolean): void;
   destroy(): void;
+  previewer?: CherryPreviewerApi;
 }
 
 let loadPromise: Promise<CherryConstructor> | null = null;

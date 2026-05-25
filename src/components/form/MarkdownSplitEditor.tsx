@@ -8,6 +8,7 @@ import {
   cmIndexFromPos,
   getCodeMirrorFromHost,
 } from '@/utils/cherryCodeMirror';
+import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import {
   findTextMatches,
@@ -100,6 +101,7 @@ export function MarkdownSplitEditor({
 
         instance = new Cherry({
           id: editorId,
+          autoScrollByCursor: true,
           editor: {
             defaultModel: 'edit&preview',
             height: '100%',
@@ -112,12 +114,14 @@ export function MarkdownSplitEditor({
             afterChange: (text: string) => {
               if (syncingRef.current) return;
               onChangeRef.current(text);
+              requestAnimationFrame(() => syncCherryPaneHeights(editorId, instance));
             },
           },
         }) as CherryInstance;
 
         cherryRef.current = instance;
         setReady(true);
+        requestAnimationFrame(() => syncCherryPaneHeights(editorId, instance));
       })
       .catch((err: unknown) => {
         if (!destroyed) {
@@ -172,7 +176,9 @@ export function MarkdownSplitEditor({
     const host = document.getElementById(editorId);
     if (!host) return;
 
-    const syncLayout = () => syncCherryPaneHeights(editorId);
+    const syncLayout = () => {
+      syncCherryPaneHeights(editorId, cherryRef.current);
+    };
     syncLayout();
 
     const cherry = host.querySelector('.cherry');
@@ -180,11 +186,21 @@ export function MarkdownSplitEditor({
     if (cherry) ro.observe(cherry);
     window.addEventListener('resize', syncLayout);
 
+  let unbindScroll = () => {};
+  const bindScroll = () => {
+    unbindScroll();
+    unbindScroll = bindCherryEditorPreviewScroll(editorId, cherryRef.current);
+  };
+  bindScroll();
+  const bindTimer = window.setTimeout(bindScroll, 120);
+
     return () => {
+      window.clearTimeout(bindTimer);
       ro.disconnect();
       window.removeEventListener('resize', syncLayout);
+      unbindScroll();
     };
-  }, [ready, editorId, value]);
+  }, [ready, editorId]);
 
   useEffect(() => {
     if (!ready) return;

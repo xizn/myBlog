@@ -1,10 +1,9 @@
-/* Cherry 分栏：保持默认左右架构（edit & preview），仅修正高度与滚动 */
+/* Cherry 分栏：左右 edit&preview；编辑区用不透明白底，不改动全局主题变量 */
 .md-split-editor--cherry .md-split-editor__workspace {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background: var(--surface-editor);
   overflow: hidden;
 }
 
@@ -34,7 +33,6 @@
   pointer-events: none;
 }
 
-/* 与 indexdoc 一致：toolbar 占满首行，编辑区与预览区左右各 50% */
 .md-split-editor--cherry .cherry {
   flex: 1 !important;
   min-height: 0 !important;
@@ -44,18 +42,12 @@
   display: flex !important;
   flex-flow: row wrap !important;
   flex-direction: row !important;
-  align-items: flex-start !important;
-  align-content: flex-start !important;
+  align-items: stretch !important;
+  align-content: stretch !important;
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
   overflow: hidden !important;
-}
-
-/* 覆盖 cherry 默认 min-height: calc(100% - 48px)，避免被内容撑开 */
-.md-split-editor--cherry .cherry .cherry-editor,
-.md-split-editor--cherry .cherry .cherry-previewer {
-  min-height: 0 !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-toolbar {
@@ -66,39 +58,52 @@
 
 .md-split-editor--cherry .cherry .cherry-editor,
 .md-split-editor--cherry .cherry .cherry-previewer {
-  width: 50% !important;
-  max-width: 50% !important;
-  /* flex-shrink 须为 1，否则 max-height 无法压住 CodeMirror 撑开的高度 */
-  flex: 0 1 50% !important;
   box-sizing: border-box !important;
-  align-self: stretch !important;
+  flex: 0 1 auto !important;
   min-height: 0 !important;
   height: calc(100% - 48px) !important;
   max-height: calc(100% - 48px) !important;
-  overflow: hidden !important;
   position: relative !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-editor {
-  background: var(--surface-editor) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-previewer {
-  background: var(--surface-preview, var(--surface-editor)) !important;
+  background: #ffffff !important;
   border-left: 1px solid var(--border) !important;
-  overflow-y: auto !important;
   overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor,
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-previewer {
+  background: var(--bg-elevated) !important;
+}
+
+.md-split-editor--cherry .cherry-drag,
+.md-split-editor--cherry .cherry-editor-mask,
+.md-split-editor--cherry .cherry-previewer-mask {
+  display: none !important;
+  pointer-events: none !important;
 }
 
 .md-split-editor--cherry .cherry .cherry-editor .CodeMirror {
   height: 100% !important;
+  background: #ffffff !important;
   font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.875rem;
   line-height: 1.75;
 }
 
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor .CodeMirror {
+  background: var(--bg-elevated) !important;
+}
+
 .md-split-editor--cherry .cherry .cherry-editor .CodeMirror-scroll {
-  overflow: auto !important;
+  overflow-y: auto !important;
   height: 100% !important;
   max-height: 100% !important;
 }
@@ -118,4 +123,54 @@
 
 .md-split-editor__load-error {
   color: #b42318;
+}
+
+/* 编辑器语法/预览：固定可读配色，不跟随光晕或 accent */
+.md-split-editor--cherry .cm-s-default .cm-header {
+  color: #1c1b19 !important;
+  font-weight: 700;
+}
+
+.md-split-editor--cherry .cm-s-default .cm-link,
+.md-split-editor--cherry .cm-s-default .cm-url {
+  color: #2563eb !important;
+}
+
+.md-split-editor--cherry .cm-s-default .cm-string {
+  color: #0f766e !important;
+}
+
+.md-split-editor--cherry .cm-s-default .cm-comment {
+  color: #6b7280 !important;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown {
+  color: #1c1b19;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h1,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h2,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h3,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h4,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h5,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown h6 {
+  color: #1c1b19;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown p,
+.md-split-editor--cherry .cherry-previewer .cherry-markdown li {
+  color: #4a4640;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown a {
+  color: #2563eb;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown a.anchor:before {
+  color: #6b7280;
+}
+
+.md-split-editor--cherry .cherry-previewer .cherry-markdown :not(pre) > code {
+  color: #9a3412;
+  background-color: #f5f4f0;
 }

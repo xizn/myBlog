@@ -65,8 +65,8 @@
 }
 
 .list-search__input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.72;
+  color: var(--placeholder, var(--text-muted));
+  opacity: 1;
 }
 
 .list-search__input:focus {

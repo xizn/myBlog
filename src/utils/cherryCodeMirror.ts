@@ -7,21 +7,12 @@ export type CodeMirrorEditor = {
   off: (event: string, handler: () => void) => void;
   getCursor: () => { line: number; ch: number };
   indexFromPos?: (pos: { line: number; ch: number }) => number;
+  getScrollerElement: () => HTMLElement;
+  getScrollInfo: () => { top: number; left: number };
+  lineAtHeight: (height: number, mode?: string) => number;
+  charCoords: (pos: { line: number; ch: number }, mode?: string) => { top: number; bottom: number };
+  getLineHandle: (line: number) => { height: number };
 };
-
-/** CodeMirror 位置 → 字符偏移 */
-export function cmIndexFromPos(cm: CodeMirrorEditor, pos: { line: number; ch: number }): number {
-  if (cm.indexFromPos) return cm.indexFromPos(pos);
-  const lines = cm.getValue().split('\n');
-  let index = 0;
-  for (let i = 0; i < pos.line && i < lines.length; i++) {
-    index += lines[i]!.length + 1;
-  }
-  if (pos.line < lines.length) {
-    index += Math.min(pos.ch, lines[pos.line]!.length);
-  }
-  return index;
-}
 
 export function getCodeMirrorFromHost(hostId: string): CodeMirrorEditor | null {
   const host = document.getElementById(hostId);
@@ -43,4 +34,18 @@ export function charOffsetToCmPos(
   const line = lines.length - 1;
   const ch = lines[line]?.length ?? 0;
   return { line, ch };
+}
+
+/** CodeMirror 位置 → 字符偏移 */
+export function cmIndexFromPos(cm: CodeMirrorEditor, pos: { line: number; ch: number }): number {
+  if (cm.indexFromPos) return cm.indexFromPos(pos);
+  const lines = cm.getValue().split('\n');
+  let index = 0;
+  for (let i = 0; i < pos.line && i < lines.length; i++) {
+    index += lines[i]!.length + 1;
+  }
+  if (pos.line < lines.length) {
+    index += Math.min(pos.ch, lines[pos.line]!.length);
+  }
+  return index;
 }
