@@ -132,6 +132,38 @@ async function run() {
   }
   console.log('OK: Cherry Markdown — 内置工具栏可用');
 
+  // Regression: 编辑区内部可滚动（长文时 scrollHeight > clientHeight）
+  const scrollOk = await page.evaluate(() => {
+    const scrollEl = document.querySelector('.editor-draft-panel--active .CodeMirror-scroll');
+    if (!scrollEl) return false;
+    const style = getComputedStyle(scrollEl);
+    const canScroll =
+      scrollEl.scrollHeight > scrollEl.clientHeight + 8 ||
+      style.overflowY === 'auto' ||
+      style.overflowY === 'scroll';
+    if (!canScroll) return false;
+    scrollEl.scrollTop = 0;
+    scrollEl.scrollTop = 160;
+    return scrollEl.scrollTop > 0;
+  });
+  if (!scrollOk) {
+    throw new Error('Cherry 编辑区内部应可纵向滚动');
+  }
+  console.log('OK: Cherry 编辑区 — 内部可滚动');
+
+  // Regression: 正文检索
+  const searchInput = page.locator('.editor-draft-panel--active .md-split-editor__search-input');
+  await searchInput.waitFor({ timeout: 10000 });
+  await searchInput.fill('行 1');
+  await page.waitForTimeout(200);
+  const searchCount = await page
+    .locator('.editor-draft-panel--active .md-split-editor__search-count')
+    .textContent();
+  if (!searchCount || searchCount.includes('无匹配')) {
+    throw new Error('正文检索应能匹配「行 1」');
+  }
+  console.log('OK: 正文检索 — 可匹配并显示计数');
+
   await browser.close();
 }
 

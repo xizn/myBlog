@@ -1,0 +1,89 @@
+.image-zoom-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-zoom-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(28, 25, 23, 0.72);
+  cursor: zoom-out;
+}
+
+.image-zoom-lightbox__toolbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.image-zoom-lightbox__toolbar button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.image-zoom-lightbox__toolbar button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.image-zoom-lightbox__scale {
+  min-width: 3rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.image-zoom-lightbox__reset {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+.image-zoom-lightbox__close {
+  margin-left: 0.25rem;
+}
+
+.image-zoom-lightbox__stage {
+  position: relative;
+  z-index: 1;
+  max-width: min(92vw, 1200px);
+  max-height: min(78vh, 800px);
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.image-zoom-lightbox__img {
+  max-width: 100%;
+  max-height: min(78vh, 800px);
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: 0 16px 40px rgba(28, 25, 23, 0.35);
+  transition: transform 0.15s ease;
+  cursor: zoom-in;
+}

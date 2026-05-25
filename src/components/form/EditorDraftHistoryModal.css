@@ -1,35 +1,34 @@
+/* 右侧抽屉：半透明遮罩，不盖住整页为纯白 */
 .editor-draft-history {
   position: fixed;
   inset: 0;
   z-index: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
+  pointer-events: auto;
 }
 
-/* 不透明遮罩，避免背后编辑器透出 */
 .editor-draft-history__backdrop {
   position: absolute;
   inset: 0;
-  background: var(--bg);
-  opacity: 1;
+  border: none;
+  padding: 0;
+  background: rgba(28, 25, 23, 0.42);
+  cursor: pointer;
+  animation: editor-draft-history-fade-in 0.2s ease;
 }
 
 .editor-draft-history__panel {
-  position: relative;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1;
-  width: min(520px, 100%);
-  height: min(80vh, 640px);
-  min-height: min(80vh, 640px);
-  max-height: min(80vh, 640px);
+  width: min(420px, 92vw);
   display: flex;
   flex-direction: column;
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 24px 48px rgba(28, 25, 23, 0.18);
-  overflow: hidden;
+  border-left: 1px solid var(--border);
+  box-shadow: -12px 0 40px rgba(28, 25, 23, 0.14);
+  animation: editor-draft-history-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   isolation: isolate;
 }
 
@@ -39,7 +38,6 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: var(--bg-card);
 }
 
 .editor-draft-history__header {
@@ -47,7 +45,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.125rem;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   background: var(--bg-card);
@@ -84,24 +82,47 @@
 .editor-draft-history__body {
   flex: 1;
   min-height: 0;
-  overflow-x: hidden;
   overflow-y: auto;
-  padding: 0.5rem 0 0.75rem;
-  background: var(--bg-card);
+  overflow-x: hidden;
+  padding: 0.5rem 0 1rem;
+}
+
+.editor-draft-history__loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+}
+
+.editor-draft-history__spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: editor-draft-history-spin 0.7s linear infinite;
+}
+
+.editor-draft-history__loading-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .editor-draft-history__section {
-  padding: 0 0.75rem 0.65rem;
-  min-width: 0;
+  padding: 0.5rem 1rem 0.75rem;
 }
 
 .editor-draft-history__section-title {
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin: 0.5rem 0.35rem 0.45rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
 }
 
 .editor-draft-history__list {
@@ -110,23 +131,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .editor-draft-history__item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.2rem;
+  gap: 0.25rem;
   width: 100%;
-  min-width: 0;
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   text-align: left;
-  font: inherit;
-  color: inherit;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   overflow: hidden;
   transition:
@@ -174,4 +192,28 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   margin: 0;
+}
+
+@keyframes editor-draft-history-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes editor-draft-history-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes editor-draft-history-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

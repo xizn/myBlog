@@ -26,21 +26,21 @@ async function run() {
   if (tabsBefore < 2) throw new Error(`应有至少 2 个标签，实际 ${tabsBefore}`);
 
   await page.getByRole('button', { name: '历史笔记与草稿' }).click();
-  await page.waitForSelector('.async-dialog-preparing', { timeout: 3000 }).catch(() => null);
   await page.waitForSelector('.editor-draft-history__panel', { timeout: 15000 });
-  const panelOpaque = await page.evaluate(() => {
+
+  const drawerOk = await page.evaluate(() => {
     const panel = document.querySelector('.editor-draft-history__panel');
-    const inner = document.querySelector('.editor-draft-history__panel-inner');
-    if (!panel || !inner) return false;
-    const bg = getComputedStyle(panel).backgroundColor;
-    return bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent';
+    const backdrop = document.querySelector('.editor-draft-history__backdrop');
+    if (!panel || !backdrop) return false;
+    const panelRect = panel.getBoundingClientRect();
+    const backdropBg = getComputedStyle(backdrop).backgroundColor;
+    const isRight = panelRect.right >= window.innerWidth - 4;
+    const isFullHeight = panelRect.height >= window.innerHeight * 0.9;
+    const dimmed = backdropBg !== 'rgba(0, 0, 0, 0)' && backdropBg !== 'transparent';
+    return isRight && isFullHeight && dimmed;
   });
-  if (!panelOpaque) {
-    throw new Error('历史弹窗面板应为不透明背景');
-  }
-  const panelHeight = await page.locator('.editor-draft-history__panel').evaluate((el) => el.getBoundingClientRect().height);
-  if (panelHeight < 400) {
-    throw new Error(`历史弹窗高度异常：${panelHeight}`);
+  if (!drawerOk) {
+    throw new Error('历史记录应为右侧全高抽屉 + 半透明遮罩');
   }
 
   const draftPick = page.locator('.editor-draft-history__section').first().locator('.editor-draft-history__item').first();

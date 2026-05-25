@@ -1,6 +1,7 @@
 import { useCallback, useRef, type AnchorHTMLAttributes, type MouseEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSlug from 'rehype-slug';
+import { MarkdownZoomableImage } from '@/components/learning/MarkdownZoomableImage';
 import { scrollToMarkdownHash } from '@/utils/markdownAnchor';
 import './MarkdownContent.css';
 
@@ -65,7 +66,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
     >
       <ReactMarkdown
         rehypePlugins={[rehypeSlug]}
-        components={{ a: MarkdownAnchor }}
+        components={{ a: MarkdownAnchor, img: MarkdownZoomableImage }}
       >
         {content}
       </ReactMarkdown>

@@ -1,8 +1,8 @@
 .md-split-editor {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 17rem);
-  max-height: calc(100vh - 14rem);
+  min-height: min(68vh, 640px);
+  max-height: min(75vh, 720px);
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface-editor);
@@ -16,11 +16,15 @@
   box-shadow: var(--shadow-hover);
 }
 
+/* AI 行 + 检索栏：在表单主区滚动时贴在编辑区顶部 */
 .md-split-editor__chrome {
+  position: sticky;
+  top: 0;
   flex-shrink: 0;
   z-index: 6;
   background: var(--surface-header);
   border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
 }
 
 .md-split-editor__head {
@@ -30,6 +34,7 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .md-split-editor__label {
@@ -47,9 +52,103 @@
   flex-wrap: wrap;
 }
 
+.md-split-editor__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+}
+
+.md-split-editor__cursor {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.md-split-editor__search {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: 1;
+  min-width: 12rem;
+  max-width: 22rem;
+  margin-left: auto;
+}
+
+.md-split-editor__search-input {
+  flex: 1;
+  min-width: 0;
+  height: 1.875rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--text);
+  background: var(--surface-input, var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.md-split-editor__search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.md-split-editor__search-count {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+.md-split-editor__search-nav {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.md-split-editor__search-nav:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.md-split-editor__search-nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.md-split-editor__workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 @media (max-width: 900px) {
   .md-split-editor {
-    min-height: calc(100vh - 14rem);
-    max-height: calc(100vh - 12rem);
+    min-height: min(60vh, 520px);
+    max-height: min(70vh, 600px);
+  }
+
+  .md-split-editor__status {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .md-split-editor__search {
+    max-width: none;
+    margin-left: 0;
   }
 }

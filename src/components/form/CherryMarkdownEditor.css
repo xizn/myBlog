@@ -1,16 +1,21 @@
-/* Cherry 编辑器区域：对齐 indexdoc-editor 分栏体验 */
+/* Cherry 编辑器区域：对齐 indexdoc-editor 分栏体验，内部可滚动 */
 .md-split-editor--cherry .md-split-editor__workspace {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--surface-editor);
+  overflow: hidden;
 }
 
 .md-split-editor__cherry-root {
   flex: 1;
   min-height: 0;
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -25,22 +30,46 @@
 }
 
 .md-split-editor--cherry .cherry {
+  flex: 1 !important;
+  min-height: 0 !important;
   height: 100% !important;
-  min-height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
+  overflow: hidden !important;
+}
+
+.md-split-editor--cherry .cherry .cherry-toolbar {
+  flex-shrink: 0;
 }
 
 .md-split-editor--cherry .cherry .cherry-editor,
 .md-split-editor--cherry .cherry .cherry-previewer {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: auto !important;
   background: var(--surface-editor) !important;
 }
 
 .md-split-editor--cherry .cherry .CodeMirror {
+  height: 100% !important;
   font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.875rem;
   line-height: 1.75;
+}
+
+.md-split-editor--cherry .cherry .CodeMirror-scroll {
+  overflow: auto !important;
+  max-height: 100%;
+}
+
+.md-split-editor--cherry .cherry-previewer img {
+  cursor: zoom-in;
+  max-width: 100%;
 }
 
 .md-split-editor__loading,
