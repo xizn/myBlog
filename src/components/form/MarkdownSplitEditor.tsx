@@ -15,7 +15,8 @@ import {
   getCodeMirrorFromHost,
 } from '@/utils/cherryCodeMirror';
 import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
-import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
+import { getCherryThemeSettings, isAppDarkTheme, syncCherryTheme } from '@/utils/cherryEditorTheme';
+import { getCherryMermaidRendererConfig } from '@/utils/cherryMermaidRenderer';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import {
   ensureCherryPreviewerClosed,
@@ -142,6 +143,7 @@ export function MarkdownSplitEditor({
           value,
           locale: 'zh_CN',
           themeSettings: getCherryThemeSettings(),
+          ...getCherryMermaidRendererConfig(isAppDarkTheme()) ?? {},
           callback: {
             beforeImageMounted: (srcProp: string, src: string) => {
               if (typeof src === 'string' && src.startsWith('data:image/')) {
