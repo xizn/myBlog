@@ -336,6 +336,20 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-
   border-left-color: var(--accent) !important;
 }
 
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown figure {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-markdown figure svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .md-split-editor--cherry .cherry .cherry-editor .CodeMirror-scroll {
   overflow-y: auto !important;
   height: 100% !important;
