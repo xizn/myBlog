@@ -127,12 +127,23 @@ export function MarkdownSplitEditor({
             defaultModel: 'editOnly',
             height: '100%',
           },
+          previewer: {
+            lazyLoadImg: {
+              noLoadImgNum: -1,
+            },
+          },
           height: '100%',
           width: '100%',
           value,
           locale: 'zh_CN',
           themeSettings: getCherryThemeSettings(),
           callback: {
+            beforeImageMounted: (srcProp: string, src: string) => {
+              if (typeof src === 'string' && src.startsWith('data:image/')) {
+                return { srcProp, src };
+              }
+              return { srcProp, src };
+            },
             afterChange: (text: string) => {
               if (syncingRef.current) return;
               onChangeRef.current(text);
@@ -332,7 +343,17 @@ export function MarkdownSplitEditor({
 
     const onOpen = () => {
       previewOpenRef.current = true;
-      requestAnimationFrame(() => syncCherryPaneHeights(editorId, cherry, true));
+      requestAnimationFrame(() => {
+        syncCherryPaneHeights(editorId, cherry, true);
+        try {
+          const html = cherry.getHtml?.();
+          if (html && cherry.previewer?.refresh) {
+            cherry.previewer.refresh(html);
+          }
+        } catch {
+          /* 预览刷新失败时不阻断编辑 */
+        }
+      });
     };
     const onClose = () => {
       previewOpenRef.current = false;

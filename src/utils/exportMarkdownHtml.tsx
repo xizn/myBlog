@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import ReactMarkdown from 'react-markdown';
 import rehypeSlug from 'rehype-slug';
+import { splitMarkdownByDataImages, stripCherryImageAlt } from '@/utils/markdownImageData';
 
 /** 将 Markdown 转为导出用 HTML（含样式类名） */
 export function markdownBlocksToExportHtml(
@@ -10,14 +11,28 @@ export function markdownBlocksToExportHtml(
     const titleHtml = block.title
       ? `<h1 class="export-doc-title">${escapeHtml(block.title)}</h1>`
       : '';
-    const bodyHtml = renderToStaticMarkup(
-      <article className="markdown-content export-markdown-body">
-        <ReactMarkdown rehypePlugins={[rehypeSlug]}>{block.body || ' '}</ReactMarkdown>
-      </article>
-    );
+    const bodyHtml = renderBodyToExportHtml(block.body || ' ');
     return `${titleHtml}${bodyHtml}`;
   });
   return `<div class="export-pdf-host export-pdf-host--rich">${parts.join('<hr class="export-doc-sep" />')}</div>`;
+}
+
+function renderBodyToExportHtml(body: string): string {
+  const segments = splitMarkdownByDataImages(body);
+  const inner = segments
+    .map((segment) => {
+      if (segment.kind === 'image') {
+        const alt = escapeHtml(stripCherryImageAlt(segment.alt) || '正文图片');
+        return `<p><img class="markdown-content__img" src="${segment.src}" alt="${alt}" /></p>`;
+      }
+      return renderToStaticMarkup(
+        <article className="markdown-content export-markdown-body">
+          <ReactMarkdown rehypePlugins={[rehypeSlug]}>{segment.text}</ReactMarkdown>
+        </article>
+      );
+    })
+    .join('');
+  return `<div class="export-markdown-body-wrap">${inner}</div>`;
 }
 
 function escapeHtml(s: string): string {

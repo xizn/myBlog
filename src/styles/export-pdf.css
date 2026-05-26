@@ -74,3 +74,11 @@
 .export-pdf-host--rich .markdown-content a {
   color: #9a7b4a;
 }
+
+.export-pdf-host--rich .markdown-content__img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 8px;
+}

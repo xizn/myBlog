@@ -33,12 +33,7 @@ export function ConfirmDialog({
           <Button variant="ghost" onClick={onCancel} disabled={loading}>
             取消
           </Button>
-          <Button
-            variant="primary"
-            className="confirm-dialog__danger"
-            onClick={onConfirm}
-            disabled={loading}
-          >
+          <Button variant="outline" onClick={onConfirm} disabled={loading}>
             {loading ? '处理中…' : confirmLabel}
           </Button>
         </div>

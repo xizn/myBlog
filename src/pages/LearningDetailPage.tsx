@@ -95,7 +95,7 @@ export function LearningDetailPage() {
           <Link to={`/learning/${id}/edit`} state={{ returnTo: location.pathname }}>
             <Button variant="outline">编辑</Button>
           </Link>
-          <Button variant="outline" className="btn--danger-outline" onClick={() => setConfirmOpen(true)}>
+          <Button variant="outline" onClick={() => setConfirmOpen(true)}>
             删除
           </Button>
         </div>

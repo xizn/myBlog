@@ -21,7 +21,13 @@ const FORMATS: {
   icon: string;
 }[] = [
   { id: 'txt', label: '纯文本', ext: '.txt', hint: '标题、摘要与正文，通用可读', icon: 'TXT' },
-  { id: 'doc', label: 'Word 文档', ext: '.docx', hint: '保留标题层级，可用 Word 打开', icon: 'DOC' },
+  {
+    id: 'doc',
+    label: 'Word 文档',
+    ext: '.docx',
+    hint: '保留标题层级并嵌入图片（过大图会提示）',
+    icon: 'DOC',
+  },
   { id: 'pdf', label: 'PDF 文档', ext: '.pdf', hint: '排版预览效果，适合打印分享', icon: 'PDF' },
 ];
 

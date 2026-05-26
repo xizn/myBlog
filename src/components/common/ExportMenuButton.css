@@ -22,6 +22,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface-input);
+  color: var(--text-on-surface-input, var(--text));
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
@@ -66,7 +67,7 @@
 .export-menu__card-title {
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-on-surface-input, var(--text));
 }
 
 .export-menu__card-ext {
@@ -78,7 +79,7 @@
 .export-menu__card-hint {
   font-size: 0.68rem;
   line-height: 1.4;
-  color: var(--text-muted);
+  color: color-mix(in srgb, var(--text-on-surface-input, #1c1b19) 62%, transparent);
 }
 
 @media (max-width: 520px) {

@@ -14,10 +14,12 @@ export interface CherryPreviewerApi {
   editOnly?: (dealToolbar?: boolean) => void;
   recoverPreviewer?: (dealToolbar?: boolean) => void;
   isPreviewerHidden?: () => boolean;
+  refresh?: (html: string) => void;
 }
 
 export interface CherryInstance {
   getMarkdown(): string;
+  getHtml?: (wrapTheme?: boolean) => string;
   setMarkdown(content: string, keepCursor?: boolean): void;
   destroy(): void;
   setTheme?: (theme: string) => void;

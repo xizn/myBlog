@@ -22,7 +22,8 @@ function downloadBlob(blob: Blob, filename: string): void {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  // 延迟释放，避免部分浏览器在大文件导出时下载被中断
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 function blocksToPlainText(blocks: ExportBlock[]): string {
@@ -42,47 +43,12 @@ export async function exportAsTxt(blocks: ExportBlock[], baseName: string): Prom
   downloadBlob(blob, `${safeFilename(baseName)}.txt`);
 }
 
-/** 导出为 Word (.docx)，识别 Markdown 标题 */
+/** 导出为 Word (.docx)，识别 Markdown 标题与 base64 图片 */
 export async function exportAsDoc(blocks: ExportBlock[], baseName: string): Promise<void> {
-  const { Document, HeadingLevel, Packer, Paragraph, TextRun } = await import('docx');
+  const { Document, Packer } = await import('docx');
+  const { markdownBlocksToDocxChildren } = await import('@/utils/exportDocxMarkdown');
 
-  const markdownLineToParagraph = (line: string) => {
-    const h3 = line.match(/^###\s+(.+)/);
-    if (h3) {
-      return new Paragraph({ text: h3[1], heading: HeadingLevel.HEADING_3, spacing: { after: 120 } });
-    }
-    const h2 = line.match(/^##\s+(.+)/);
-    if (h2) {
-      return new Paragraph({ text: h2[1], heading: HeadingLevel.HEADING_2, spacing: { after: 160 } });
-    }
-    const h1 = line.match(/^#\s+(.+)/);
-    if (h1) {
-      return new Paragraph({ text: h1[1], heading: HeadingLevel.HEADING_1, spacing: { after: 200 } });
-    }
-    if (!line.trim()) return new Paragraph({ text: '' });
-    return new Paragraph({
-      children: [new TextRun(line)],
-      spacing: { after: 120 },
-    });
-  };
-
-  const children: InstanceType<typeof Paragraph>[] = [];
-  for (const block of blocks) {
-    if (block.title) {
-      children.push(
-        new Paragraph({
-          text: block.title,
-          heading: HeadingLevel.HEADING_1,
-          spacing: { after: 240 },
-        })
-      );
-    }
-    for (const line of block.body.split(/\r?\n/)) {
-      children.push(markdownLineToParagraph(line));
-    }
-    children.push(new Paragraph({ text: '' }));
-  }
-
+  const children = await markdownBlocksToDocxChildren(blocks);
   const doc = new Document({
     sections: [{ properties: {}, children }],
   });

@@ -1,9 +1,7 @@
 import { useCallback, useRef, type AnchorHTMLAttributes, type MouseEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { buildInternalNavState } from '@/utils/editorReturnTo';
-import ReactMarkdown from 'react-markdown';
-import rehypeSlug from 'rehype-slug';
-import { MarkdownZoomableImage } from '@/components/learning/MarkdownZoomableImage';
+import { MarkdownBody } from '@/components/learning/MarkdownBody';
 import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
 import { scrollToMarkdownHash } from '@/utils/markdownAnchor';
 import { openExternalLink } from '@/utils/openExternalLink';
@@ -98,12 +96,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       className="markdown-content"
       onClick={handleArticleClick}
     >
-      <ReactMarkdown
-        rehypePlugins={[rehypeSlug]}
-        components={{ a: renderAnchor, img: MarkdownZoomableImage }}
-      >
-        {content}
-      </ReactMarkdown>
+      <MarkdownBody content={content} renderAnchor={renderAnchor} />
     </article>
   );
 }
