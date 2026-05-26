@@ -66,6 +66,7 @@ export function MarkdownSplitEditor({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchCaseSensitive, setSearchCaseSensitive] = useState(false);
   const [matchIndex, setMatchIndex] = useState(0);
   const [cursorLine, setCursorLine] = useState(1);
   const [cursorCol, setCursorCol] = useState(1);
@@ -73,8 +74,8 @@ export function MarkdownSplitEditor({
   const [refPickerOpen, setRefPickerOpen] = useState(false);
 
   const matches = useMemo(
-    () => findTextMatches(value, searchQuery),
-    [value, searchQuery]
+    () => findTextMatches(value, searchQuery, { caseSensitive: searchCaseSensitive }),
+    [value, searchQuery, searchCaseSensitive]
   );
 
   const syncCursor = useCallback(() => {
@@ -109,7 +110,7 @@ export function MarkdownSplitEditor({
 
   useEffect(() => {
     setMatchIndex(0);
-  }, [searchQuery]);
+  }, [searchQuery, searchCaseSensitive]);
 
   useEffect(() => {
     let destroyed = false;
@@ -444,6 +445,17 @@ export function MarkdownSplitEditor({
                 }
               }}
             />
+            <button
+              type="button"
+              className={`md-split-editor__search-case${searchCaseSensitive ? ' md-split-editor__search-case--on' : ''}`}
+              disabled={disabled || !ready}
+              aria-label="区分大小写"
+              aria-pressed={searchCaseSensitive}
+              title={searchCaseSensitive ? '区分大小写（已开启）' : '区分大小写（已关闭）'}
+              onClick={() => setSearchCaseSensitive((on) => !on)}
+            >
+              Aa
+            </button>
             <span className="md-split-editor__search-count">{searchCountLabel}</span>
             <button
               type="button"
