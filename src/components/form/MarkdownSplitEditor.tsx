@@ -214,8 +214,8 @@ export function MarkdownSplitEditor({
     const cherry = cherryRef.current;
     if (!cherry || !ready) return;
     const current = cherry.getMarkdown();
-    if (current === value) return;
     const incoming = sanitizeCherryDataImageMarkdown(value);
+    if (current === incoming) return;
     syncingRef.current = true;
     cherry.setMarkdown(incoming, true);
     syncingRef.current = false;

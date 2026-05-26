@@ -33,14 +33,8 @@ const DATA_IMAGE_HTML_LEAK_RE =
 
 function listDataImageMatches(content: string): DataImageMatch[] {
   const items: DataImageMatch[] = [];
-  const needsLoose = /data:image\/[^;\)]*#/i.test(content);
-  const patterns = needsLoose
-    ? [DATA_IMAGE_LOOSE_RE]
-    : [MARKDOWN_IMAGE_INLINE_RE, DATA_IMAGE_LOOSE_RE];
-
-  for (const source of patterns) {
-    if (items.length > 0) break;
-    const re = new RegExp(source.source, source.flags);
+  const tryMatch = (re: RegExp) => {
+    re.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = re.exec(content)) !== null) {
       items.push({
@@ -49,6 +43,15 @@ function listDataImageMatches(content: string): DataImageMatch[] {
         src: match[2]!,
         index: match.index!,
       });
+    }
+  };
+  const needsLoose = /data:image\/[^;\)]*#/i.test(content);
+  if (needsLoose) {
+    tryMatch(new RegExp(DATA_IMAGE_LOOSE_RE.source, DATA_IMAGE_LOOSE_RE.flags));
+  } else {
+    tryMatch(new RegExp(MARKDOWN_IMAGE_INLINE_RE.source, MARKDOWN_IMAGE_INLINE_RE.flags));
+    if (items.length === 0) {
+      tryMatch(new RegExp(DATA_IMAGE_LOOSE_RE.source, DATA_IMAGE_LOOSE_RE.flags));
     }
   }
   return items;

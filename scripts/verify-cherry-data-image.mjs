@@ -1,13 +1,16 @@
 /**
- * Cherry base64 图片拖拽改尺寸：URL 修复与整段替换
+ * Cherry base64 图片拖拽改尺寸：URL 修复、alt 选区与 HTML 泄漏修复
  * 运行：node scripts/verify-cherry-data-image.mjs
  */
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+assert.ok(existsSync(join(root, 'src/utils/cherryDataImageMarkdown.ts')), 'cherryDataImageMarkdown.ts missing');
+
 const src = readFileSync(join(root, 'src/utils/cherryDataImageMarkdown.ts'), 'utf8');
 const editor = readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.tsx'), 'utf8');
 
@@ -15,7 +18,9 @@ assert.match(src, /patchCherryDataImageResize/);
 assert.match(src, /isImgResizing/);
 assert.match(src, /replaceDataImageSizeInMarkdown/);
 assert.match(src, /repairDataImageUrl/);
+assert.match(src, /sanitizeCherryDataImageMarkdown/);
 assert.match(editor, /patchCherryDataImageResize/);
+assert.match(editor, /sanitizeCherryDataImageMarkdown/);
 
 const CHERRY_ALT_MARK_RE =
   /#(?:center|right|left|float-right|float-left|border|shadow|radius|B|S|R|auto|\d+(?:px|em|pt|pc|in|mm|cm|ex|%)?)/gi;
