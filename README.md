@@ -1,4 +1,4 @@
-# Studio — Agent 项目博客
+# AIBlog — Agent 项目博客
 
 简约风格个人站点：展示 Agent 实验项目、学习笔记，支持在线预览与本地草稿编辑。可打包为 Windows 桌面版，数据保存在本机。
 
@@ -6,6 +6,9 @@
 
 - [技术栈](#技术栈)
 - [功能概览](#功能概览)
+- [多窗口编辑](#多窗口编辑)
+- [Markdown 编辑器](#markdown-编辑器)
+- [主题与背景图](#主题与背景图)
 - [详情页与编辑页](#详情页与编辑页)
 - [AI 整理正文](#ai-整理正文)
 - [路由](#路由)
@@ -21,7 +24,8 @@
 | 类别 | 说明 |
 |------|------|
 | 前端 | React 19、TypeScript、Vite 6、React Router 7 |
-| 正文 | react-markdown |
+| 正文编辑 | Cherry Markdown（分栏编辑，资源来自 `public/vendor/cherry-markdown`） |
+| 正文展示 | react-markdown |
 | 桌面 | Electron 35（可选） |
 | 数据 | 浏览器 `npm run dev` → **localStorage**；桌面版 → **`userData/data/*.json`** |
 | 种子 | 首次为空时从 `src/config/*.data.ts` 写入示例数据 |
@@ -30,10 +34,11 @@
 
 | 模块 | 能力 |
 |------|------|
-| **首页** | 精选 Agent、最近学习（见下方开关字段） |
+| **首页** | 精选 Agent、最近学习（磨砂卡片；有背景图时 hero 透明叠字） |
 | **Agent 项目** | 列表、标签/关键词筛选、详情、预览、增删改、草稿箱 |
 | **学习记录** | Markdown 笔记、列表筛选、详情、增删改、草稿箱 |
-| **表单工作区** | 全屏编辑：左侧表单 + 右侧草稿预览与时间线 |
+| **多窗口编辑** | 顶栏标签页，可同时打开多篇草稿/笔记 |
+| **主题** | 顶栏「主题」：预设配色、自定义背景图、浅色/深色字、玻璃/透明编辑区 |
 
 ### 列表与首页
 
@@ -53,6 +58,48 @@
 | `lastReadAt` | 两者 | 上次打开详情的时间（自动） |
 | `updatedAt` | 两者 | 最后修改时间（保存时更新） |
 
+## 多窗口编辑
+
+学习笔记与 Agent 项目均支持**顶栏多标签**编辑（`LearningEditorWorkspace` / `AgentEditorWorkspace`）。
+
+| 操作 | 说明 |
+|------|------|
+| **+ 新建笔记 / 项目** | 新建草稿并打开新标签 |
+| **历史笔记与草稿** | 右侧抽屉，点击条目打开单个标签 |
+| **多选** | 抽屉右上角「多选」→ 勾选多条 → 底部「打开所选」一次性打开多个标签 |
+| **关闭标签** | 标签上的 ×；关闭后内容仍保留在草稿存储中 |
+
+标签状态会持久化到本地（见 [本地存储](#本地存储)）。
+
+## Markdown 编辑器
+
+学习笔记正文使用 **Cherry Markdown** 分栏编辑器（`MarkdownSplitEditor`）。
+
+| 功能 | 说明 |
+|------|------|
+| **默认** | 仅编辑区；**预览默认关闭** |
+| **眼睛按钮** | 工具栏预览开关：控制**预览窗显隐**与预览内容（输入时不会在关闭状态下弹出空白预览栏） |
+| **关联** | 工具栏「关联」：插入指向其他笔记或 Agent 项目的 Markdown 链接 |
+| **检索** | 顶栏搜索框：正文关键词跳转（Enter / ↑↓） |
+| **滚动同步** | 预览打开时，编辑区与预览区滚动联动 |
+| **有背景图** | 编辑区为白底深字「孤岛」，与全站背景图字色设置解耦 |
+
+内部链接在应用内跳转；外部链接在 Electron 下经 `openExternal` 用系统浏览器打开。
+
+## 主题与背景图
+
+顶栏 **主题** 打开设置弹窗：
+
+| 分类 | 选项 |
+|------|------|
+| **主题** | 预设背景色、光晕色 |
+| **自定义** | 上传背景图（≤2MB）、铺满/包含、透明度、编辑区玻璃/透明、背景图文字（自动 / 浅色字 / 深色字） |
+
+- 无背景图时：跟随站点深色/浅色主题，`--text` 与背景对比自动计算。
+- 有背景图时：按「浅色字 / 深色字」调整顶栏、卡片、首页 hero 描边等；编辑区见上文「白底孤岛」。
+
+配置键：`myblog_theme_settings`。
+
 ## 详情页与编辑页
 
 功能分工：**开关在详情页**，**正文编辑与 AI 整理在编辑页**。
@@ -67,28 +114,22 @@
 | 操作 | 说明 |
 |------|------|
 | **未完待续 / 精选** | `FormFlagToggle` 开关，**切换后立即保存**，无需进编辑页 |
-| **编辑** | 进入全屏表单（FormWorkspace） |
+| **编辑** | 进入草稿多窗口工作区或已发布编辑流程 |
 | **删除** | 二次确认后删除 |
 
-### 编辑页（FormWorkspace）
+### 编辑页
 
 | 内容 | 说明 |
 |------|------|
 | 标题、摘要、标签、正文等 | 常规表单字段 |
 | **AI 整理** | 仅学习笔记正文旁，见 [AI 整理正文](#ai-整理正文) |
-| 草稿箱 | 右侧：自动/手动保存草稿、恢复、操作记录 |
+| 多标签 + 历史抽屉 | 见 [多窗口编辑](#多窗口编辑) |
 | **不含** 未完待续/精选开关 | 这两项请在**详情页**调整 |
 
 ### 新建笔记/项目时
 
 - 保存后 `featured` / `toBeContinued` 默认为 **关闭**。
 - 需要上首页：打开**详情页**，打开对应开关即可。
-
-### 编辑页保存时
-
-- 会保存标题、正文等你在表单里改过的内容。
-- `featured` / `toBeContinued` 会按**打开编辑页时**从数据库读入的值写回（编辑页没有开关可改）。
-- 若刚在详情页改过开关，建议先完成详情页保存，再进编辑；或编辑完保存后到详情页确认开关状态。
 
 ## AI 整理正文
 
@@ -121,14 +162,15 @@
 |------|------|
 | `/` | 首页 |
 | `/agents` | Agent 列表 |
-| `/agents/new` | 新建项目 |
-| `/agents/draft/:draftId` | Agent 草稿编辑 |
+| `/agents/new` | 新建项目（进入草稿工作区） |
+| `/agents/draft/:draftId` | Agent 多标签草稿编辑 |
 | `/agents/:id` | 项目详情（**精选**开关） |
 | `/agents/:id/edit` | 编辑已发布项目 |
 | `/learning` | 学习列表 |
-| `/learning/new` | 新建笔记 |
+| `/learning/new` | 新建笔记（进入草稿工作区） |
+| `/learning/draft/:draftId` | 学习笔记多标签草稿编辑 |
 | `/learning/:id` | 笔记详情（**未完待续**开关） |
-| `/learning/:id/edit` | 编辑笔记（**AI 整理**） |
+| `/learning/:id/edit` | 编辑已发布笔记（生成/进入草稿） |
 
 ## 开发与构建
 
@@ -137,6 +179,14 @@ npm install
 npm run dev      # 浏览器开发，一般 http://localhost:5173
 npm run build    # 生产构建 → dist/
 npm run preview  # 预览 dist/
+```
+
+### 验证脚本（可选）
+
+```bash
+npm run verify:tabs              # 多标签草稿切换（学习 + Agent）
+npm run verify:markdown-helpers  # Markdown 辅助逻辑
+npm run verify:draft-batch       # 草稿批量删除等
 ```
 
 ## 桌面版（Windows）
@@ -150,15 +200,16 @@ npm run desktop   # Electron 窗口，需先 build
 
 - 内置静态服务加载 `dist/`，**固定端口 `1688`**（`127.0.0.1:1688`）。端口变化会导致 `localStorage` 按 origin 隔离，故桌面版必须固定端口。
 - AI 请求经主进程 `ai:fetch` IPC 转发（见 `electron/main.cjs`、`preload.cjs`）。
+- 外部链接经 `openExternal` 在系统浏览器打开。
 
 ### 数据目录（Windows）
 
 | 运行方式 | 目录 |
 |----------|------|
 | `npm run desktop` | `%APPDATA%\my-blog\data\` |
-| 打包 exe（Studio Blog） | `%APPDATA%\Studio Blog\data\` |
+| 打包 exe | `%APPDATA%\Studio Blog\data\`（以 `package.json` / electron-builder 配置为准） |
 
-示例文件：`myblog_learnings.json`、`myblog_agents.json`、`myblog_ai_settings.json`。
+示例文件：`myblog_learnings.json`、`myblog_agents.json`、`myblog_theme_settings.json` 等。
 
 ### 打包
 
@@ -168,13 +219,7 @@ npm run pack:win     # 输出到 release/
 npm run pack:desktop # 打包并复制 exe 到桌面
 ```
 
-自定义目录：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/pack-desktop.ps1 -InstallDir "D:\Apps\StudioBlog"
-```
-
-便携版：`Studio-Blog-1.0.0-portable.exe`，双击即用，无需安装向导。
+便携版：`Studio-Blog-1.0.0-portable.exe`（名称以构建配置为准），双击即用。
 
 ### Electron 下载失败
 
@@ -182,9 +227,6 @@ powershell -ExecutionPolicy Bypass -File scripts/pack-desktop.ps1 -InstallDir "D
 
 ```powershell
 Remove-Item -Recurse -Force node_modules\electron -ErrorAction SilentlyContinue
-npm install
-# 或
-$env:ELECTRON_MIRROR = "https://npmmirror.com/mirrors/electron/"
 npm install
 ```
 
@@ -194,10 +236,14 @@ npm install
 |------|------|
 | `myblog_agents` | 已发布 Agent |
 | `myblog_learnings` | 已发布学习笔记 |
-| `myblog_agent_drafts` | Agent 草稿 |
+| `myblog_agent_drafts` | Agent 草稿列表 |
 | `myblog_learning_drafts` | 学习笔记草稿列表（多篇） |
+| `myblog_agent_editor_tabs` | Agent 编辑区已打开标签 |
+| `myblog_learning_editor_tabs` | 学习笔记编辑区已打开标签 |
+| `myblog_theme_settings` | 主题与背景图 |
+| `myblog_ai_settings` | AI 接口配置 |
 | `myblog_ops_learning_*` | 学习表单操作记录 |
-| `myblog_ai_settings` | AI 接口配置（Key / 地址 / 模型） |
+| `myblog_draft_learning_*` | 单篇学习草稿正文快照 |
 
 桌面版：每个键对应 `data/<键名>.json`。
 
@@ -210,63 +256,46 @@ npm install
 
 ## 项目结构
 
-### 目录树
-
 ```
 myBlog/
-├── electron/           # 主进程、JSON 存储、preload（含 AI 请求转发）
-├── public/             # favicon、previews/
-├── scripts/            # pack-desktop.ps1 等
+├── electron/              # 主进程、JSON 存储、preload、openExternal
+├── public/
+│   ├── vendor/cherry-markdown/   # Cherry 编辑器静态资源
+│   └── previews/                 # Agent 本地预览页
+├── scripts/               # 验证脚本、打包、sync-cherry
 ├── src/
-│   ├── api/            # CRUD、草稿
+│   ├── api/               # CRUD、草稿
 │   ├── components/
-│   │   ├── agent/      # 卡片、预览、草稿箱
-│   │   ├── common/     # 按钮、搜索、弹窗
-│   │   ├── form/       # 表单、FormWorkspace、FormFlagToggle、AiFormatButton
-│   │   └── learning/   # 卡片、Markdown 渲染、草稿箱
-│   ├── config/         # 种子数据
-│   ├── hooks/          # useAgents、useLearnings、useFormWorkspace
-│   ├── pages/          # 各路由页面（详情页含顶栏开关）
-│   ├── router/
-│   ├── types/
-│   └── utils/          # appStorage、aiSettings、formatMarkdownWithAi 等
-├── dist/               # build 输出
-└── release/            # 打包 exe
+│   │   ├── agent/
+│   │   ├── common/        # 按钮、主题设置、弹窗
+│   │   ├── form/          # 表单、Cherry 编辑、历史抽屉、AI 整理
+│   │   └── learning/
+│   ├── contexts/          # 多标签 EditorTabs Context
+│   ├── pages/             # 含 *EditorWorkspace 多窗口页
+│   ├── styles/            # 全局、背景图、玻璃 UI
+│   └── utils/             # themeSettings、cherry*、editorReturnTo 等
+├── dist/
+└── release/
 ```
 
 ### 关键文件速查
 
 | 文件 | 作用 |
 |------|------|
-| `pages/LearningDetailPage.tsx` | 详情 + 顶栏「未完待续」 |
-| `pages/AgentDetailPage.tsx` | 详情 + 顶栏「精选」 |
-| `pages/LearningDraftFormPage.tsx` | 草稿编辑（多篇新建草稿） |
-| `pages/LearningNewPage.tsx` | 新建笔记入口 |
-| `pages/LearningEditPage.tsx` | 已发布笔记 → 草稿编辑 |
-| `components/form/LearningForm.tsx` | 笔记表单 + AI 整理入口 |
-| `components/form/AiFormatButton.tsx` | AI 整理弹窗、恢复原文 |
-| `components/form/FormFlagToggle.tsx` | 详情页胶囊开关 |
-| `utils/appStorage.ts` | 统一本地存储 |
-| `utils/formatMarkdownWithAi.ts` | 调用 OpenAI 兼容 API 整理正文 |
-| `electron/fileStorage.cjs` | JSON 持久化 |
-
-### 数据流
-
-```
-页面 → api/*.ts → localStore → appStorage
-                              ├─ 浏览器：localStorage
-                              └─ Electron：userData/data/*.json
-
-AI 整理 → formatMarkdownWithAi → aiHttp / studioAiFetch（Electron）
-```
-
-更细的目录说明见上文各模块；组件级列表可在仓库内按需查阅 `src/components/`。
+| `pages/LearningEditorWorkspace.tsx` | 学习笔记多标签 + 历史抽屉 |
+| `pages/AgentEditorWorkspace.tsx` | Agent 多标签 + 历史抽屉 |
+| `components/form/EditorDraftHistoryModal.tsx` | 历史列表、单选打开、**多选批量打开** |
+| `components/form/MarkdownSplitEditor.tsx` | Cherry 编辑、预览开关、检索、关联 |
+| `utils/cherryPreviewPane.ts` | 预览窗与眼睛按钮状态同步 |
+| `utils/themeSettings.ts` | 主题/背景图 CSS 变量 |
+| `utils/editorReturnTo.ts` | 编辑页「返回」回到来源路由 |
+| `constants/site.ts` | 站点名 AIBlog、导航 |
 
 ## 开发约定
 
 - 路径别名：`@/` → `src/`
-- 路由用 `Component` + 布局内 `<Outlet key={pathname-locationKey} />`
-- 表单标题 label 使用 `.form-field > label`，避免影响 `label.form-switch`
+- 多标签表单：每标签独立 `*DraftPanel`，避免单实例 `initial` 覆盖；见 `npm run verify:tabs`
+- 修复 UI/路由类问题后：`npm run build`，相关场景跑对应 verify 脚本
 - Hook 回调用 ref 持有，避免 `useEffect` 依赖不稳定函数
 
 更多约定见 `.cursor/rules/`。
