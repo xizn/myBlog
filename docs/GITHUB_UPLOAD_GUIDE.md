@@ -132,4 +132,4 @@ git log -1 --oneline
 
 ## 不要提交的内容
 
-`.gitignore` 已忽略 `node_modules`、`dist` 等。切勿提交 `.env`、API Key、密码等敏感信息。
+`.gitignore` 已忽略 `node_modules`、`dist` 等。切勿提交 `.env`、API Key、密码等敏感信息 。
