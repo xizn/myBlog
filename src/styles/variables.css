@@ -1,7 +1,7 @@
 :root {
   --bg: #f8f7f4;
   --bg-elevated: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card: rgba(255, 255, 255, 0.62);
   --border: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(0, 0, 0, 0.14);
   --divider: rgba(0, 0, 0, 0.12);
@@ -43,4 +43,5 @@
   --surface-sidebar: rgba(248, 247, 244, 0.75);
   --surface-editor: #f3f2ef;
   --surface-preview: #ffffff;
+  --panel-solid-bg: rgba(255, 255, 255, 0.88);
 }

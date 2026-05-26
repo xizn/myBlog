@@ -1,3 +1,17 @@
+/* 深色主题 · 无背景图：顶栏导航可读 + 交互反馈 */
+html[data-theme-mode='dark']:not([data-theme-bg-image='1']) .site-header__logo {
+  color: #f5f4f0;
+}
+
+html[data-theme-mode='dark']:not([data-theme-bg-image='1']) .site-header__tagline,
+html[data-theme-mode='dark']:not([data-theme-bg-image='1']) .site-header__link {
+  color: #d4d0c8;
+}
+
+html[data-theme-mode='dark']:not([data-theme-bg-image='1']) .theme-settings-trigger {
+  color: #d4d0c8;
+}
+
 /* 深色主题：卡片层次 + 侧栏草稿（简约玻璃质感） */
 html[data-theme-mode='dark'] .learning-card,
 html[data-theme-mode='dark'] .agent-card,

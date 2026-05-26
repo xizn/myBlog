@@ -17,6 +17,10 @@ import {
 import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
 import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
+import {
+  ensureCherryPreviewerClosed,
+  setCherryPreviewerOpen,
+} from '@/utils/cherryPreviewPane';
 import { mountCherryNoteLinkButton } from '@/utils/cherryNoteLinkButton';
 import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
 import { buildInternalNavState } from '@/utils/editorReturnTo';
@@ -47,6 +51,7 @@ export function MarkdownSplitEditor({
   const reactId = useId().replace(/:/g, '');
   const editorId = `cherry-md-${reactId}`;
   const cherryRef = useRef<CherryInstance | null>(null);
+  const previewOpenRef = useRef(false);
   const syncingRef = useRef(false);
   const disabledRef = useRef(disabled);
   disabledRef.current = disabled;
@@ -119,7 +124,7 @@ export function MarkdownSplitEditor({
           id: editorId,
           autoScrollByCursor: true,
           editor: {
-            defaultModel: 'edit&preview',
+            defaultModel: 'editOnly',
             height: '100%',
           },
           height: '100%',
@@ -131,14 +136,22 @@ export function MarkdownSplitEditor({
             afterChange: (text: string) => {
               if (syncingRef.current) return;
               onChangeRef.current(text);
-              requestAnimationFrame(() => syncCherryPaneHeights(editorId, instance));
+              requestAnimationFrame(() => {
+                if (!previewOpenRef.current) {
+                  ensureCherryPreviewerClosed(editorId, instance);
+                } else {
+                  syncCherryPaneHeights(editorId, instance, true);
+                }
+              });
             },
           },
         }) as CherryInstance;
 
         cherryRef.current = instance;
+        previewOpenRef.current = false;
+        instance.switchModel?.('editOnly');
         setReady(true);
-        requestAnimationFrame(() => syncCherryPaneHeights(editorId, instance));
+        requestAnimationFrame(() => setCherryPreviewerOpen(editorId, instance, false));
       })
       .catch((err: unknown) => {
         if (!destroyed) {
@@ -164,7 +177,7 @@ export function MarkdownSplitEditor({
     });
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme-mode'],
+      attributeFilter: ['data-theme-mode', 'data-theme-bg-image', 'data-theme-bg-tone'],
     });
 
     return () => observer.disconnect();
@@ -178,7 +191,12 @@ export function MarkdownSplitEditor({
     syncingRef.current = true;
     cherry.setMarkdown(value, true);
     syncingRef.current = false;
-  }, [value, ready]);
+    requestAnimationFrame(() => {
+      if (!previewOpenRef.current) {
+        ensureCherryPreviewerClosed(editorId, cherry);
+      }
+    });
+  }, [value, ready, editorId]);
 
   useEffect(() => {
     const host = document.getElementById(editorId);
@@ -210,7 +228,7 @@ export function MarkdownSplitEditor({
     if (!host) return;
 
     const syncLayout = () => {
-      syncCherryPaneHeights(editorId, cherryRef.current);
+      syncCherryPaneHeights(editorId, cherryRef.current, previewOpenRef.current);
     };
     syncLayout();
 
@@ -306,6 +324,28 @@ export function MarkdownSplitEditor({
       if (disabledRef.current) return;
       setRefPickerOpen(true);
     });
+  }, [ready, editorId]);
+
+  useEffect(() => {
+    const cherry = cherryRef.current;
+    if (!ready || !cherry?.$event) return;
+
+    const onOpen = () => {
+      previewOpenRef.current = true;
+      requestAnimationFrame(() => syncCherryPaneHeights(editorId, cherry, true));
+    };
+    const onClose = () => {
+      previewOpenRef.current = false;
+      requestAnimationFrame(() => setCherryPreviewerOpen(editorId, cherry, false));
+    };
+
+    cherry.$event.on('previewerOpen', onOpen);
+    cherry.$event.on('previewerClose', onClose);
+
+    return () => {
+      cherry.$event?.off('previewerOpen', onOpen);
+      cherry.$event?.off('previewerClose', onClose);
+    };
   }, [ready, editorId]);
 
   useEffect(() => {

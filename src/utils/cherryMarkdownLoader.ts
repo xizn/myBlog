@@ -11,6 +11,9 @@ export interface CherryPreviewerApi {
   highlightLine?: (lineNum: number) => void;
   setRealLayout?: (editorPct?: string, previewerPct?: string) => void;
   syncVirtualLayoutFromReal?: () => void;
+  editOnly?: (dealToolbar?: boolean) => void;
+  recoverPreviewer?: (dealToolbar?: boolean) => void;
+  isPreviewerHidden?: () => boolean;
 }
 
 export interface CherryInstance {
@@ -18,7 +21,12 @@ export interface CherryInstance {
   setMarkdown(content: string, keepCursor?: boolean): void;
   destroy(): void;
   setTheme?: (theme: string) => void;
+  switchModel?: (model?: 'edit&preview' | 'editOnly' | 'previewOnly', showToolbar?: boolean) => void;
   previewer?: CherryPreviewerApi;
+  $event?: {
+    on: (event: string, handler: () => void) => void;
+    off: (event: string, handler: () => void) => void;
+  };
 }
 
 let loadPromise: Promise<CherryConstructor> | null = null;

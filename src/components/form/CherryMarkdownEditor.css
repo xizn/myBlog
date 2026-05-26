@@ -89,6 +89,28 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar-button.che
   position: relative !important;
 }
 
+.md-split-editor--cherry .cherry .cherry-previewer.cherry-previewer--hidden {
+  display: none !important;
+  flex: 0 0 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.md-split-editor--cherry .cherry .cherry-editor.cherry-editor--full {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
 .md-split-editor--cherry .cherry .cherry-editor {
   background: #ffffff !important;
   overflow: hidden !important;
@@ -121,6 +143,32 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar .cherry-to
 html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:hover {
   color: var(--text) !important;
   background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button {
+  border-radius: var(--radius);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:hover:not(.disabled) {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:active:not(.disabled) {
+  transform: scale(0.96);
+}
+
+.md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:active:not(.disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-editor {
@@ -309,6 +357,103 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-previewer .cherry-
 
 .md-split-editor__load-error {
   color: #b42318;
+}
+
+/* 有背景图：白底编辑岛 + 深色字（覆盖 data-theme-mode=dark 下的浅色 CodeMirror） */
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry .cherry-editor,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry .cherry-previewer {
+  background: #ffffff !important;
+  border-left-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-toolbar {
+  background: #f8f7f4 !important;
+  color: #5a554e !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button {
+  color: #5a554e !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-toolbar .cherry-toolbar-button:hover:not(.disabled) {
+  color: #1c1b19 !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry .cherry-editor .CodeMirror {
+  background: #ffffff !important;
+  color: #1c1b19 !important;
+  caret-color: #1c1b19 !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .CodeMirror-gutters {
+  background: #f5f4f0 !important;
+  border-right-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .CodeMirror-linenumber {
+  color: #9a948c !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .CodeMirror-cursor {
+  border-left-color: #1c1b19 !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .CodeMirror-selected {
+  background: rgba(154, 123, 74, 0.22) !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll span,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-variable-2,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-string,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-strong,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-em,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-meta,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-keyword,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-atom,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-editor .CodeMirror-scroll .cm-def {
+  color: #1c1b19 !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cm-s-default .cm-header {
+  color: #1c1b19 !important;
+  font-weight: 700;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cm-s-default .cm-link,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cm-s-default .cm-url {
+  color: #2563eb !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cm-s-default .cm-string {
+  color: #0f766e !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cm-s-default .cm-comment {
+  color: #6b7280 !important;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h1,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h2,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h3,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h4,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h5,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown h6 {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown p,
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown li {
+  color: #4a4640;
+}
+
+html[data-theme-bg-image='1'] .md-split-editor--cherry .cherry-previewer .cherry-markdown a {
+  color: #2563eb;
 }
 
 /* 浅色主题：编辑器语法/预览固定可读配色 */

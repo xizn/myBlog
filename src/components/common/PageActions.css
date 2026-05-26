@@ -38,3 +38,12 @@
   background: rgba(196, 92, 92, 0.1) !important;
   border-color: #c45c5c !important;
 }
+
+html[data-theme-bg-image='1'] .btn--danger-outline {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.detail-actions .btn {
+  font-weight: 500;
+}

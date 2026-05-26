@@ -1,6 +1,6 @@
 /** 站点基础信息 */
 export const SITE = {
-  name: 'Studio',
+  name: 'AIBlog',
   tagline: 'Agent 项目集 · 学习记录',
   author: 'YS',
   description: '存放 Agent 实验项目，记录学习与实践。',

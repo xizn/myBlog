@@ -1,29 +1,76 @@
+.home {
+  position: relative;
+  z-index: 1;
+}
+
 .home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  min-height: auto;
+  padding: 2.5rem 0 2rem;
   text-align: center;
-  padding: 4rem 0 5rem;
+}
+
+.home-section {
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+}
+
+.home-section + .home-section {
+  margin-top: 1.5rem;
+}
+
+/* 正中品牌区：默认无底板，只留文字（与无背景图时一致；有图时靠 bg-image-surfaces 描边/字色） */
+.home-hero__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  width: min(100%, 42rem);
+  padding: 2rem 2.5rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .home-hero__eyebrow {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .home-hero__title {
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 8vw, 4.5rem);
-  font-weight: 400;
-  line-height: 1.1;
-  margin-bottom: 1rem;
+  font-size: clamp(3.25rem, 11vw, 5.25rem);
+  font-weight: 500;
+  line-height: 0.98;
+  margin: 0;
+  color: var(--text);
+  letter-spacing: -0.03em;
 }
 
 .home-hero__desc {
-  font-size: 1.05rem;
+  font-size: clamp(0.9375rem, 2.2vw, 1.0625rem);
+  font-weight: 400;
   color: var(--text-muted);
-  max-width: 36ch;
-  margin: 0 auto 2rem;
+  max-width: 30ch;
+  margin: 0.25rem 0 0;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
 }
 
 .home-hero__actions {
@@ -31,10 +78,6 @@
   gap: 0.75rem;
   justify-content: center;
   flex-wrap: wrap;
-}
-
-.home-section {
-  margin-top: 4rem;
 }
 
 .home-section__head {
@@ -48,6 +91,7 @@
   font-family: var(--font-serif);
   font-size: 1.75rem;
   font-weight: 600;
+  color: var(--text);
 }
 
 .home-section__more {
@@ -66,11 +110,63 @@
   gap: 1.25rem;
 }
 
-.home-learning-list {
-  border-top: 1px solid var(--border);
-}
-
 .home-loading {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
+
+/* 背景图 + 透明 hero：轻量描边（避免双色 halo 叠出过亮白边） */
+html[data-theme-bg-image='1'] .home-hero__brand .home-hero__title {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.32);
+}
+
+html[data-theme-bg-image='1'] .home-hero__brand .home-hero__desc,
+html[data-theme-bg-image='1'] .home-hero__brand .home-hero__eyebrow {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__title {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__desc,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__eyebrow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.38);
+}
+
+html[data-theme-bg-image='1']:not([data-theme-bg-tone]) .home-hero__brand .home-hero__title {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1']:not([data-theme-bg-tone]) .home-hero__brand .home-hero__desc {
+  color: #3d3b38;
+}
+
+html[data-theme-bg-image='1']:not([data-theme-bg-tone]) .home-hero__brand .home-hero__eyebrow {
+  color: #5a554e;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__title {
+  color: #faf9f7;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__desc {
+  color: #ece8e0;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .home-hero__brand .home-hero__eyebrow {
+  color: #d8d4cc;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .home-hero__brand .home-hero__title {
+  color: #1c1b19;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .home-hero__brand .home-hero__desc {
+  color: #3d3b38;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='light'] .home-hero__brand .home-hero__eyebrow {
+  color: #5a554e;
+}
+

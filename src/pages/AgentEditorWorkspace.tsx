@@ -8,7 +8,10 @@ import {
 } from '@/api/agentDrafts';
 import { AgentDraftPanel } from '@/components/agent/AgentDraftPanel';
 import { toAgentFormValues } from '@/components/form/AgentForm';
-import { EditorDraftHistoryModal } from '@/components/form/EditorDraftHistoryModal';
+import {
+  EditorDraftHistoryModal,
+  type EditorDraftHistorySelection,
+} from '@/components/form/EditorDraftHistoryModal';
 import { FormEditorTabs } from '@/components/form/FormEditorTabs';
 import { useAgentEditorTabs } from '@/contexts/AgentEditorTabsContext';
 import { usePageHeader } from '@/contexts/PageHeaderContext';
@@ -83,6 +86,29 @@ export function AgentEditorWorkspace() {
       openDraftInTab(draft.draftId, draft.title.trim() || project.title);
     },
     [publishedProjects, openDraftInTab]
+  );
+
+  const openBatchInTabs = useCallback(
+    (items: EditorDraftHistorySelection[]) => {
+      if (items.length === 0) return;
+      let lastDraftId: string | null = null;
+      for (const item of items) {
+        if (item.kind === 'draft') {
+          ensureTab(item.draftId, item.title);
+          lastDraftId = item.draftId;
+          continue;
+        }
+        const project = publishedProjects?.find((p) => p.id === item.publishedId);
+        if (!project) continue;
+        const draft = ensureAgentEditDraft(item.publishedId, toAgentFormValues(project));
+        const title = draft.title.trim() || project.title;
+        ensureTab(draft.draftId, title);
+        lastDraftId = draft.draftId;
+      }
+      if (lastDraftId) selectTab(lastDraftId);
+      closeHistory();
+    },
+    [ensureTab, selectTab, closeHistory, publishedProjects]
   );
 
   useEffect(() => {
@@ -160,6 +186,7 @@ export function AgentEditorWorkspace() {
         onClose={closeHistory}
         onSelectDraft={openDraftInTab}
         onSelectPublished={openPublishedInTab}
+        onOpenBatch={openBatchInTabs}
       />
     </div>
   );

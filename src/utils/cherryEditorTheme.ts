@@ -3,16 +3,22 @@ export function isAppDarkTheme(): boolean {
   return document.documentElement.dataset.themeMode === 'dark';
 }
 
+/** 有背景图时编辑区为白底孤岛，Cherry 工具栏/语法高亮走浅色 */
+export function useCherryLightChrome(): boolean {
+  const root = document.documentElement;
+  return root.dataset.themeBgImage === '1' || !isAppDarkTheme();
+}
+
 export function getCherryThemeSettings() {
-  const dark = isAppDarkTheme();
+  const lightChrome = useCherryLightChrome();
   return {
-    mainTheme: dark ? 'dark' : 'light',
+    mainTheme: lightChrome ? 'light' : 'dark',
     codeBlockTheme: 'default',
-    inlineCodeTheme: dark ? 'black' : 'red',
-    toolbarTheme: dark ? 'dark' : 'light',
+    inlineCodeTheme: lightChrome ? 'red' : 'black',
+    toolbarTheme: lightChrome ? 'light' : 'dark',
   };
 }
 
 export function syncCherryTheme(cherry: { setTheme?: (theme: string) => void } | null | undefined): void {
-  cherry?.setTheme?.(isAppDarkTheme() ? 'dark' : 'light');
+  cherry?.setTheme?.(useCherryLightChrome() ? 'light' : 'dark');
 }

@@ -8,7 +8,11 @@ type CodeMirrorWithDom = {
 };
 
 /** 约束 Cherry 左右栏高度（仅布局，不改主题色） */
-export function syncCherryPaneHeights(hostId: string, cherry?: CherryInstance | null): void {
+export function syncCherryPaneHeights(
+  hostId: string,
+  cherry?: CherryInstance | null,
+  previewOpenOverride?: boolean
+): void {
   const host = document.getElementById(hostId);
   if (!host) return;
 
@@ -18,6 +22,10 @@ export function syncCherryPaneHeights(hostId: string, cherry?: CherryInstance | 
   const preview = host.querySelector('.cherry-previewer') as HTMLElement | null;
   if (!cherryEl || !editor || !preview) return;
 
+  const previewOpen =
+    previewOpenOverride ??
+    !preview.classList.contains('cherry-previewer--hidden');
+
   const paneH = Math.max(160, cherryEl.clientHeight - (toolbar?.offsetHeight ?? 48));
   const px = `${paneH}px`;
 
@@ -26,16 +34,25 @@ export function syncCherryPaneHeights(hostId: string, cherry?: CherryInstance | 
   editor.style.setProperty('min-height', '0', 'important');
   editor.style.overflow = 'hidden';
 
-  preview.style.setProperty('height', px, 'important');
-  preview.style.setProperty('max-height', px, 'important');
-  preview.style.setProperty('min-height', '0', 'important');
-  preview.style.overflowY = 'auto';
-  preview.style.overflowX = 'hidden';
-  preview.style.overscrollBehavior = 'contain';
+  if (previewOpen) {
+    preview.style.removeProperty('display');
+    preview.style.setProperty('height', px, 'important');
+    preview.style.setProperty('max-height', px, 'important');
+    preview.style.setProperty('min-height', '0', 'important');
+    preview.style.overflowY = 'auto';
+    preview.style.overflowX = 'hidden';
+    preview.style.overscrollBehavior = 'contain';
 
-  const markdown = preview.querySelector('.cherry-markdown') as HTMLElement | null;
-  if (markdown) {
-    markdown.style.minHeight = '0';
+    const markdown = preview.querySelector('.cherry-markdown') as HTMLElement | null;
+    if (markdown) {
+      markdown.style.minHeight = '0';
+    }
+  } else {
+    preview.style.setProperty('display', 'none', 'important');
+    preview.style.setProperty('height', '0', 'important');
+    preview.style.setProperty('max-height', '0', 'important');
+    preview.style.setProperty('min-height', '0', 'important');
+    preview.style.overflow = 'hidden';
   }
 
   const cmEl = editor.querySelector('.CodeMirror') as
@@ -61,6 +78,8 @@ export function syncCherryPaneHeights(hostId: string, cherry?: CherryInstance | 
     drag.style.display = 'none';
   }
 
-  cherry?.previewer?.setRealLayout?.('50%', '50%');
-  cherry?.previewer?.syncVirtualLayoutFromReal?.();
+  if (previewOpen) {
+    cherry?.previewer?.setRealLayout?.('50%', '50%');
+    cherry?.previewer?.syncVirtualLayoutFromReal?.();
+  }
 }

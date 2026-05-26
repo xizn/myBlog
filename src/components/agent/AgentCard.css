@@ -97,14 +97,10 @@
 .agent-card__preview {
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--accent);
   padding: 0.35rem 0.75rem;
-  border: 1px solid var(--accent);
   border-radius: var(--radius);
-  transition: background 0.2s, color 0.2s;
-}
-
-.agent-card__preview:hover {
-  background: var(--accent);
-  color: var(--text-on-accent);
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
 }

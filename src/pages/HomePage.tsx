@@ -19,15 +19,17 @@ export function HomePage() {
   return (
     <div className="home">
       <section className="home-hero">
-        <p className="home-hero__eyebrow">Personal Studio</p>
-        <h1 className="home-hero__title">{SITE.name}</h1>
-        <p className="home-hero__desc">{SITE.description}</p>
+        <div className="home-hero__brand">
+          <p className="home-hero__eyebrow">Personal Blog</p>
+          <h1 className="home-hero__title">{SITE.name}</h1>
+          <p className="home-hero__desc">{SITE.description}</p>
+        </div>
         <div className="home-hero__actions">
           <Link to="/agents">
-            <Button variant="primary">浏览 Agent 项目</Button>
+            <Button variant="glass">浏览 Agent 项目</Button>
           </Link>
           <Link to="/learning">
-            <Button variant="outline">阅读学习记录</Button>
+            <Button variant="glass">阅读学习记录</Button>
           </Link>
         </div>
       </section>

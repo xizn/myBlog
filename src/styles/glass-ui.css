@@ -1,0 +1,179 @@
+/**
+ * 全站统一：磨砂玻璃按钮 + 简约透明区块（有/无背景图一致）
+ */
+
+.btn--primary,
+.btn--outline {
+  background: var(--btn-glass-bg);
+  color: var(--btn-glass-text);
+  border: 1px solid var(--btn-glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+}
+
+.btn--primary,
+.btn--outline,
+.btn--ghost,
+.btn--glass {
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btn--primary:hover:not(:disabled),
+.btn--outline:hover:not(:disabled) {
+  background: var(--btn-glass-bg-hover);
+  border-color: var(--border-hover);
+  filter: none;
+  box-shadow: var(--glass-shadow), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.btn--primary:active:not(:disabled),
+.btn--outline:active:not(:disabled),
+.btn--glass:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn--primary:focus-visible,
+.btn--outline:focus-visible,
+.btn--ghost:focus-visible,
+.btn--glass:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.btn--primary:disabled,
+.btn--outline:disabled {
+  opacity: 0.55;
+}
+
+.btn--ghost {
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--btn-glass-bg);
+  border-color: var(--btn-glass-border);
+}
+
+.btn--ghost:active:not(:disabled) {
+  transform: scale(0.98);
+  background: var(--btn-glass-bg-hover);
+}
+
+/* 首页 hero 外层透明；下方列表区块用玻璃卡片（见 HomePage.css） */
+.home-hero {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* hero 垂直间距见 HomePage.css */
+
+/* 最近学习：独立小卡片，避免顶格长条 */
+.home-learning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: none;
+}
+
+.home-learning-list .learning-card {
+  padding: 1.25rem 1.35rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+  transition:
+    border-color 0.25s,
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+
+.home-learning-list .learning-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 详情 / 列表：整体留白，预览区不顶格 */
+.learning-detail,
+.agent-detail {
+  border-radius: var(--radius-lg);
+}
+
+.agent-detail__preview {
+  margin-top: 2.5rem;
+  padding: 0 0.15rem;
+}
+
+.preview-panel--embedded {
+  margin-top: 0.5rem;
+}
+
+.preview-panel {
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.preview-panel__bar {
+  background: var(--btn-glass-bg);
+  border-bottom-color: var(--border);
+}
+
+.preview-panel__url {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Agent 卡片操作：磨砂 + 高对比字 */
+.agent-card__preview {
+  background: var(--btn-glass-bg);
+  color: var(--btn-glass-text);
+  border: 1px solid var(--btn-glass-border);
+  backdrop-filter: blur(12px) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(12px) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+}
+
+.agent-card__preview:hover {
+  background: var(--btn-glass-bg-hover);
+  border-color: var(--border-hover);
+  color: var(--btn-glass-text);
+}
+
+.agent-card__detail {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.agent-card__detail:hover {
+  color: var(--accent);
+}
+
+/* 标签：玻璃胶囊，字色跟随主题 */
+.tag {
+  background: var(--btn-glass-bg);
+  color: var(--text);
+  border-color: var(--btn-glass-border);
+  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+}
+
+.tag--active,
+.tag--clickable:hover {
+  color: var(--text);
+  background: var(--btn-glass-bg-hover);
+  border-color: var(--border-hover);
+}

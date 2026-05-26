@@ -67,28 +67,7 @@
   gap: 0.35rem;
 }
 
-/* 首页 section 内嵌列表：避免双层卡片 */
-.home-learning-list .learning-card {
-  padding: 1.5rem 0;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  border-bottom: 1px solid var(--border);
-  box-shadow: none;
-  backdrop-filter: none;
-  transform: none;
-}
-
-.home-learning-list .learning-card:hover {
-  transform: none;
-  box-shadow: none;
-  border-color: var(--border);
-}
-
-.home-learning-list .learning-card:last-child {
-  border-bottom: none;
-}
-
+/* 首页列表卡片样式见 glass-ui.css */
 .home-learning-list .learning-card__meta {
   border-top: none;
   padding-top: 0;

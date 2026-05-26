@@ -6,7 +6,6 @@ import {
   contrastTextOn,
   hexToRgba,
   isDarkBackground,
-  mixHexWithBlack,
   mixHexWithWhite,
   parseHexColor,
   tintedDarkGlass,
@@ -150,6 +149,10 @@ export function applyThemeSettings(settings: ThemeSettings = loadThemeSettings()
       const imageDark = s.backgroundImageTextMode === 'light';
       root.dataset.themeBgTone = imageDark ? 'dark' : 'light';
       applyImageTonePalette(root, buildImageTonePalette(s.backgroundColor, imageDark));
+    } else {
+      /* auto：分析完成前先套「深色字+亮卡片」，避免 hero 浅色字叠亮天空不可见 */
+      root.dataset.themeBgTone = 'light';
+      applyImageTonePalette(root, buildImageTonePalette(s.backgroundColor, false));
     }
     void applyBackgroundImageTone(
       s.backgroundImage,
@@ -206,6 +209,7 @@ interface ImageTonePalette {
   tabBgActive: string;
   tabText: string;
   tabTextActive: '#1c1b19' | '#f5f4f0';
+  panelSolidBg: string;
 }
 
 const INPUT_SOLID = 'rgba(255, 255, 255, 0.97)';
@@ -214,36 +218,35 @@ const INPUT_SOLID = 'rgba(255, 255, 255, 0.97)';
 function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePalette {
   if (imageDark) {
     const text = '#f5f4f0' as const;
-    const cardApprox = mixHexWithBlack(bgColor, 0.78);
-    const textMuted = contrastMutedOn(cardApprox, text);
-    const textSubtle = contrastSubtleOn(cardApprox, text);
 
     return {
-      bgCard: tintedDarkGlass(bgColor, 0.46),
-      headerBg: tintedDarkGlass(bgColor, 0.58),
-      bgElevated: 'rgba(255, 255, 255, 0.1)',
+      /* 浅色字：暗色磨砂卡片 + 亮色文字 */
+      bgCard: tintedDarkGlass(bgColor, 0.68),
+      headerBg: tintedDarkGlass(bgColor, 0.74),
+      bgElevated: tintedDarkGlass(bgColor, 0.55),
       surfaceHeader: tintedDarkGlass(bgColor, 0.58),
       surfaceSidebar: tintedDarkGlass(bgColor, 0.52),
       surfaceEditor: tintedDarkGlass(bgColor, 0.42),
       surfacePreview: INPUT_SOLID,
       surfaceInput: INPUT_SOLID,
       text,
-      textMuted,
-      textSubtle,
+      textMuted: '#e4e0d8',
+      textSubtle: '#d4d0c8',
       textOnSurfaceInput: '#1c1b19',
       placeholder: 'rgba(250, 249, 247, 0.58)',
       border: 'rgba(255, 255, 255, 0.16)',
       borderHover: 'rgba(255, 255, 255, 0.28)',
       divider: 'rgba(255, 255, 255, 0.24)',
-      btnGlassBg: 'rgba(255, 255, 255, 0.14)',
-      btnGlassBgHover: 'rgba(255, 255, 255, 0.22)',
-      btnGlassBorder: 'rgba(255, 255, 255, 0.26)',
+      btnGlassBg: tintedDarkGlass(bgColor, 0.72),
+      btnGlassBgHover: tintedDarkGlass(bgColor, 0.84),
+      btnGlassBorder: 'rgba(255, 255, 255, 0.22)',
       btnGlassText: text,
+      panelSolidBg: tintedDarkGlass(bgColor, 0.72),
       glassShadow:
         '0 8px 40px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       tabBg: tintedDarkGlass(bgColor, 0.38),
       tabBgActive: 'rgba(255, 255, 255, 0.14)',
-      tabText: textMuted,
+      tabText: '#e4e0d8',
       tabTextActive: text,
     };
   }
@@ -254,9 +257,10 @@ function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePa
   const textSubtle = contrastSubtleOn(cardApprox, text);
 
   return {
-    bgCard: tintedLightGlass(bgColor, 0.72),
-    headerBg: tintedLightGlass(bgColor, 0.78),
-    bgElevated: tintedLightGlass(bgColor, 0.84),
+    /* 深色字：亮色磨砂卡片 + 深色文字 */
+    bgCard: tintedLightGlass(bgColor, 0.82),
+    headerBg: tintedLightGlass(bgColor, 0.88),
+    bgElevated: tintedLightGlass(bgColor, 0.9),
     surfaceHeader: tintedLightGlass(bgColor, 0.78),
     surfaceSidebar: tintedLightGlass(bgColor, 0.74),
     surfaceEditor: tintedLightGlass(bgColor, 0.7),
@@ -274,10 +278,11 @@ function buildImageTonePalette(bgColor: string, imageDark: boolean): ImageTonePa
     btnGlassBgHover: tintedLightGlass(bgColor, 0.92),
     btnGlassBorder: 'rgba(0, 0, 0, 0.14)',
     btnGlassText: text,
+    panelSolidBg: tintedLightGlass(bgColor, 0.88),
     glassShadow:
       '0 4px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75)',
-    tabBg: tintedLightGlass(bgColor, 0.62),
-    tabBgActive: tintedLightGlass(bgColor, 0.88),
+    tabBg: tintedLightGlass(bgColor, 0.72),
+    tabBgActive: tintedLightGlass(bgColor, 0.92),
     tabText: textMuted,
     tabTextActive: text,
   };
@@ -309,6 +314,7 @@ function applyImageTonePalette(root: HTMLElement, palette: ImageTonePalette): vo
   root.style.setProperty('--tab-bg-active', palette.tabBgActive);
   root.style.setProperty('--tab-text', palette.tabText);
   root.style.setProperty('--tab-text-active', palette.tabTextActive);
+  root.style.setProperty('--panel-solid-bg', palette.panelSolidBg);
 }
 
 /** 根据背景图亮度调整顶栏/标签对比色（保留用户 backgroundColor 色调） */

@@ -6,7 +6,10 @@ import {
   getLearningDraft,
   listLearningDrafts,
 } from '@/api/learningDrafts';
-import { EditorDraftHistoryModal } from '@/components/form/EditorDraftHistoryModal';
+import {
+  EditorDraftHistoryModal,
+  type EditorDraftHistorySelection,
+} from '@/components/form/EditorDraftHistoryModal';
 import { FormEditorTabs } from '@/components/form/FormEditorTabs';
 import { toLearningFormValues } from '@/components/form/LearningForm';
 import { LearningDraftPanel } from '@/components/learning/LearningDraftPanel';
@@ -86,6 +89,29 @@ export function LearningEditorWorkspace() {
     [publishedNotes, openDraftInTab]
   );
 
+  const openBatchInTabs = useCallback(
+    (items: EditorDraftHistorySelection[]) => {
+      if (items.length === 0) return;
+      let lastDraftId: string | null = null;
+      for (const item of items) {
+        if (item.kind === 'draft') {
+          ensureTab(item.draftId, item.title);
+          lastDraftId = item.draftId;
+          continue;
+        }
+        const note = publishedNotes?.find((n) => n.id === item.publishedId);
+        if (!note) continue;
+        const draft = ensureLearningEditDraft(item.publishedId, toLearningFormValues(note));
+        const title = draft.title.trim() || note.title;
+        ensureTab(draft.draftId, title);
+        lastDraftId = draft.draftId;
+      }
+      if (lastDraftId) selectTab(lastDraftId);
+      closeHistory();
+    },
+    [ensureTab, selectTab, closeHistory, publishedNotes]
+  );
+
   useEffect(() => {
     if (routeDraftId) ensureTab(routeDraftId);
   }, [routeDraftId, ensureTab]);
@@ -161,6 +187,7 @@ export function LearningEditorWorkspace() {
         onClose={closeHistory}
         onSelectDraft={openDraftInTab}
         onSelectPublished={openPublishedInTab}
+        onOpenBatch={openBatchInTabs}
       />
     </div>
   );
