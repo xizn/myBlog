@@ -2,10 +2,11 @@ import type { ExportBlock } from '@/utils/exportRecord';
 import {
   MARKDOWN_IMAGE_INLINE_RE,
   MARKDOWN_IMAGE_LINE_RE,
-  measureDataImageSize,
+  exportImageCaption,
+  measureDataImageSizeForExport,
   MAX_DOCX_IMAGE_BYTES,
   parseDataImageUrl,
-  stripCherryImageAlt,
+  stripCherryAltLeakFromText,
 } from '@/utils/markdownImageData';
 
 type DocxHeadingLevel = (typeof import('docx'))['HeadingLevel'][keyof (typeof import('docx'))['HeadingLevel']];
@@ -35,7 +36,8 @@ function splitLineIntoPieces(line: string): MarkdownLinePiece[] {
     lastIndex = start + match[0].length;
   }
   if (lastIndex < line.length) {
-    pieces.push({ kind: 'text', text: line.slice(lastIndex) });
+    const tail = stripCherryAltLeakFromText(line.slice(lastIndex));
+    if (tail) pieces.push({ kind: 'text', text: tail });
   }
   if (pieces.length === 0) {
     pieces.push({ kind: 'text', text: line });
@@ -78,7 +80,7 @@ async function imageParagraph(
   const parsed = parseDataImageUrl(dataUrl);
   if (!parsed) return null;
   if (parsed.bytes.byteLength > MAX_DOCX_IMAGE_BYTES) {
-    const label = stripCherryImageAlt(alt);
+    const label = exportImageCaption(alt);
     return new Paragraph({
       children: [
         new TextRun({
@@ -92,8 +94,8 @@ async function imageParagraph(
     });
   }
 
-  const size = await measureDataImageSize(dataUrl);
-  const label = stripCherryImageAlt(alt);
+  const size = await measureDataImageSizeForExport(dataUrl);
+  const label = exportImageCaption(alt);
   const children: InstanceType<typeof ImageRun | typeof TextRun>[] = [
     new ImageRun({
       type: parsed.extension,
@@ -146,7 +148,7 @@ async function lineToParagraphs(
   let textBuffer = '';
   for (const piece of pieces) {
     if (piece.kind === 'text') {
-      textBuffer += piece.text;
+      textBuffer += stripCherryAltLeakFromText(piece.text);
       continue;
     }
     if (textBuffer.trim()) {

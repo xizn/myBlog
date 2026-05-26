@@ -4,8 +4,8 @@
   z-index: 400;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 4.5rem 0 0;
+  overflow: hidden;
 }
 
 .image-zoom-lightbox__backdrop {
@@ -18,17 +18,19 @@
 }
 
 .image-zoom-lightbox__toolbar {
-  position: relative;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
   z-index: 2;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
   padding: 0.5rem 0.75rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
+  transform: translateX(-50%);
 }
 
 .image-zoom-lightbox__toolbar button {
@@ -42,6 +44,8 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .image-zoom-lightbox__toolbar button:hover {
@@ -49,11 +53,36 @@
   color: var(--accent);
 }
 
-.image-zoom-lightbox__scale {
-  min-width: 3rem;
+.image-zoom-lightbox__scale-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 4.25rem;
+  padding: 0 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+.image-zoom-lightbox__scale-input {
+  width: 2.75rem;
+  padding: 0.35rem 0;
   font-size: 0.8125rem;
   font-weight: 500;
-  text-align: center;
+  text-align: right;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.image-zoom-lightbox__scale-input:focus {
+  color: var(--accent);
+}
+
+.image-zoom-lightbox__scale-suffix {
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -69,21 +98,29 @@
 .image-zoom-lightbox__stage {
   position: relative;
   z-index: 1;
-  max-width: min(92vw, 1200px);
-  max-height: min(78vh, 800px);
+  flex: 1;
+  min-height: 0;
+  width: 100%;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.image-zoom-lightbox__canvas {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  min-width: 100%;
+  min-height: 100%;
   padding: 1rem;
 }
 
 .image-zoom-lightbox__img {
-  max-width: 100%;
-  max-height: min(78vh, 800px);
+  flex-shrink: 0;
   object-fit: contain;
   border-radius: var(--radius);
   box-shadow: 0 16px 40px rgba(28, 25, 23, 0.35);
-  transition: transform 0.15s ease;
-  cursor: zoom-in;
+  cursor: default;
+  vertical-align: top;
 }

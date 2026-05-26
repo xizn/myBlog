@@ -1,4 +1,7 @@
 import { markdownBlocksToExportHtml } from '@/utils/exportMarkdownHtml';
+import { commitExportDownload, type ExportDownloadContext } from '@/utils/exportDownload';
+
+export type { ExportDownloadContext } from '@/utils/exportDownload';
 
 export type ExportFormat = 'txt' | 'doc' | 'pdf';
 
@@ -13,17 +16,12 @@ function safeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').trim() || 'export';
 }
 
-function downloadBlob(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  // 延迟释放，避免部分浏览器在大文件导出时下载被中断
-  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+async function downloadBlob(
+  blob: Blob,
+  filename: string,
+  ctx: ExportDownloadContext
+): Promise<void> {
+  await commitExportDownload({ ...ctx, filename }, blob);
 }
 
 function blocksToPlainText(blocks: ExportBlock[]): string {
@@ -37,14 +35,22 @@ function blocksToPlainText(blocks: ExportBlock[]): string {
 }
 
 /** 导出为 TXT */
-export async function exportAsTxt(blocks: ExportBlock[], baseName: string): Promise<void> {
+export async function exportAsTxt(
+  blocks: ExportBlock[],
+  baseName: string,
+  ctx: ExportDownloadContext
+): Promise<void> {
   const text = blocksToPlainText(blocks);
   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  downloadBlob(blob, `${safeFilename(baseName)}.txt`);
+  await downloadBlob(blob, `${safeFilename(baseName)}.txt`, ctx);
 }
 
 /** 导出为 Word (.docx)，识别 Markdown 标题与 base64 图片 */
-export async function exportAsDoc(blocks: ExportBlock[], baseName: string): Promise<void> {
+export async function exportAsDoc(
+  blocks: ExportBlock[],
+  baseName: string,
+  ctx: ExportDownloadContext
+): Promise<void> {
   const { Document, Packer } = await import('docx');
   const { markdownBlocksToDocxChildren } = await import('@/utils/exportDocxMarkdown');
 
@@ -53,11 +59,15 @@ export async function exportAsDoc(blocks: ExportBlock[], baseName: string): Prom
     sections: [{ properties: {}, children }],
   });
   const blob = await Packer.toBlob(doc);
-  downloadBlob(blob, `${safeFilename(baseName)}.docx`);
+  await downloadBlob(blob, `${safeFilename(baseName)}.docx`, ctx);
 }
 
 /** 导出为 PDF（渲染 Markdown 排版，接近在线编辑器导出效果） */
-export async function exportAsPdf(blocks: ExportBlock[], baseName: string): Promise<void> {
+export async function exportAsPdf(
+  blocks: ExportBlock[],
+  baseName: string,
+  ctx: ExportDownloadContext
+): Promise<void> {
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
     import('html2canvas'),
     import('jspdf'),
@@ -96,27 +106,33 @@ export async function exportAsPdf(blocks: ExportBlock[], baseName: string): Prom
       heightLeft -= pageHeight - margin * 2;
     }
 
-    pdf.save(`${safeFilename(baseName)}.pdf`);
+    const filename = `${safeFilename(baseName)}.pdf`;
+    if (ctx.fileHandle || ctx.anchor) {
+      await downloadBlob(pdf.output('blob'), filename, ctx);
+    } else {
+      pdf.save(filename);
+    }
   } finally {
     host.remove();
   }
 }
 
-/** 按格式导出 */
+/** 按格式导出（需先 prepareExportDownload 获得 ctx） */
 export async function exportRecord(
   format: ExportFormat,
   blocks: ExportBlock[],
-  baseName: string
+  baseName: string,
+  ctx: ExportDownloadContext
 ): Promise<void> {
   switch (format) {
     case 'txt':
-      await exportAsTxt(blocks, baseName);
+      await exportAsTxt(blocks, baseName, ctx);
       break;
     case 'doc':
-      await exportAsDoc(blocks, baseName);
+      await exportAsDoc(blocks, baseName, ctx);
       break;
     case 'pdf':
-      await exportAsPdf(blocks, baseName);
+      await exportAsPdf(blocks, baseName, ctx);
       break;
   }
 }

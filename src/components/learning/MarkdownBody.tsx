@@ -21,7 +21,7 @@ export function MarkdownBody({ content, renderAnchor }: MarkdownBodyProps) {
             <MarkdownZoomableImage
               key={`img-${index}`}
               src={segment.src}
-              alt={segment.alt || '正文图片'}
+              alt={segment.rawAlt}
             />
           );
         }
