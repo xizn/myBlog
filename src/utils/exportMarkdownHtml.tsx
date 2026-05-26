@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import ReactMarkdown from 'react-markdown';
 import rehypeSlug from 'rehype-slug';
-import { splitMarkdownByDataImages, stripCherryImageAlt } from '@/utils/markdownImageData';
+import { splitMarkdownByDataImages, exportImageCaption, parseCherryImageDisplaySize } from '@/utils/markdownImageData';
 
 /** 将 Markdown 转为导出用 HTML（含样式类名） */
 export function markdownBlocksToExportHtml(
@@ -22,8 +22,17 @@ function renderBodyToExportHtml(body: string): string {
   const inner = segments
     .map((segment) => {
       if (segment.kind === 'image') {
-        const alt = escapeHtml(stripCherryImageAlt(segment.alt) || '正文图片');
-        return `<p><img class="markdown-content__img" src="${segment.src}" alt="${alt}" /></p>`;
+        const alt = escapeHtml(exportImageCaption(segment.rawAlt) || '正文图片');
+        const size = parseCherryImageDisplaySize(segment.rawAlt);
+        const style =
+          size.widthPx && size.heightPx
+            ? ` style="width:${size.widthPx}px;height:${size.heightPx}px;max-width:100%"`
+            : size.widthPx
+              ? ` style="width:${size.widthPx}px;max-width:100%;height:auto"`
+              : size.widthPct
+                ? ` style="width:${size.widthPct}%;max-width:100%;height:auto"`
+                : '';
+        return `<p><img class="markdown-content__img" src="${segment.src}" alt="${alt}"${style} /></p>`;
       }
       return renderToStaticMarkup(
         <article className="markdown-content export-markdown-body">

@@ -3,6 +3,11 @@ import { Button } from '@/components/common/Button';
 import { DialogPortal } from '@/components/common/DialogPortal';
 import type { ExportBlock, ExportFormat } from '@/utils/exportRecord';
 import { exportRecord } from '@/utils/exportRecord';
+import {
+  cleanupExportDownload,
+  prepareExportDownload,
+  type ExportDownloadContext,
+} from '@/utils/exportDownload';
 import '@/styles/app-dialog.css';
 import './ExportMenuButton.css';
 
@@ -31,6 +36,10 @@ const FORMATS: {
   { id: 'pdf', label: 'PDF 文档', ext: '.pdf', hint: '排版预览效果，适合打印分享', icon: 'PDF' },
 ];
 
+function safeFilename(name: string): string {
+  return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').trim() || 'export';
+}
+
 /** 详情页导出：IndexDoc 风格格式卡片 + TXT / Word / PDF */
 export function ExportMenuButton({ baseName, blocks, disabled, className = '' }: ExportMenuButtonProps) {
   const [open, setOpen] = useState(false);
@@ -39,13 +48,27 @@ export function ExportMenuButton({ baseName, blocks, disabled, className = '' }:
 
   const runExport = async (format: ExportFormat) => {
     setError('');
+    const meta = FORMATS.find((f) => f.id === format);
+    const ext = meta?.ext ?? '';
+    const filename = `${safeFilename(baseName)}${ext}`;
+
+    let ctx: ExportDownloadContext;
+    try {
+      ctx = await prepareExportDownload(filename, ext);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      setError(err instanceof Error ? err.message : '无法选择保存位置');
+      return;
+    }
+
     setExporting(format);
     try {
-      await exportRecord(format, blocks, baseName);
+      await exportRecord(format, blocks, baseName, ctx);
       setOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : '导出失败');
     } finally {
+      cleanupExportDownload(ctx);
       setExporting(null);
     }
   };
@@ -77,7 +100,7 @@ export function ExportMenuButton({ baseName, blocks, disabled, className = '' }:
                 导出文档
               </h3>
               <p className="app-dialog__hint export-menu__subtitle">
-                「{baseName}」— 选择格式后自动下载到本机（与 Markdown 编辑器导出类似）。
+                「{baseName}」— 选择格式后将弹出保存位置（默认文件名为笔记标题）；生成完成后写入该文件。
               </p>
               <div className="export-menu__grid">
                 {FORMATS.map((f) => (

@@ -22,6 +22,10 @@ import {
   setCherryPreviewerOpen,
 } from '@/utils/cherryPreviewPane';
 import { mountCherryNoteLinkButton } from '@/utils/cherryNoteLinkButton';
+import {
+  patchCherryDataImageResize,
+  sanitizeCherryDataImageMarkdown,
+} from '@/utils/cherryDataImageMarkdown';
 import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
 import { buildInternalNavState } from '@/utils/editorReturnTo';
 import {
@@ -124,7 +128,7 @@ export function MarkdownSplitEditor({
           id: editorId,
           autoScrollByCursor: true,
           editor: {
-            defaultModel: 'editOnly',
+            defaultModel: 'edit&preview',
             height: '100%',
           },
           previewer: {
@@ -146,7 +150,15 @@ export function MarkdownSplitEditor({
             },
             afterChange: (text: string) => {
               if (syncingRef.current) return;
-              onChangeRef.current(text);
+              const cleaned = sanitizeCherryDataImageMarkdown(text);
+              if (cleaned !== text) {
+                syncingRef.current = true;
+                instance?.setMarkdown(cleaned, true);
+                syncingRef.current = false;
+                onChangeRef.current(cleaned);
+              } else {
+                onChangeRef.current(text);
+              }
               requestAnimationFrame(() => {
                 if (!previewOpenRef.current) {
                   ensureCherryPreviewerClosed(editorId, instance);
@@ -159,10 +171,11 @@ export function MarkdownSplitEditor({
         }) as CherryInstance;
 
         cherryRef.current = instance;
-        previewOpenRef.current = false;
-        instance.switchModel?.('editOnly');
+        patchCherryDataImageResize(instance);
+        previewOpenRef.current = true;
+        instance.switchModel?.('edit&preview');
         setReady(true);
-        requestAnimationFrame(() => setCherryPreviewerOpen(editorId, instance, false));
+        requestAnimationFrame(() => setCherryPreviewerOpen(editorId, instance, true));
       })
       .catch((err: unknown) => {
         if (!destroyed) {
@@ -199,8 +212,9 @@ export function MarkdownSplitEditor({
     if (!cherry || !ready) return;
     const current = cherry.getMarkdown();
     if (current === value) return;
+    const incoming = sanitizeCherryDataImageMarkdown(value);
     syncingRef.current = true;
-    cherry.setMarkdown(value, true);
+    cherry.setMarkdown(incoming, true);
     syncingRef.current = false;
     requestAnimationFrame(() => {
       if (!previewOpenRef.current) {
@@ -273,35 +287,43 @@ export function MarkdownSplitEditor({
     const onPreviewClick = (e: Event) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
-      if (anchor?.href) {
-        const resolved = resolveAppLink(anchor.href);
-        if (resolved?.kind === 'internal') {
-          e.preventDefault();
-          const fallback = location.pathname.startsWith('/agents') ? '/agents' : '/learning';
-          navigate(internalLinkTo(resolved.pathname, resolved.search, resolved.hash), {
-            state: buildInternalNavState(location, fallback),
-          });
-          return;
-        }
-        if (resolved?.kind === 'external') {
-          e.preventDefault();
-          openExternalLink(resolved.url);
-          return;
-        }
+      if (!anchor?.href) return;
+      const resolved = resolveAppLink(anchor.href);
+      if (resolved?.kind === 'internal') {
+        e.preventDefault();
+        const fallback = location.pathname.startsWith('/agents') ? '/agents' : '/learning';
+        navigate(internalLinkTo(resolved.pathname, resolved.search, resolved.hash), {
+          state: buildInternalNavState(location, fallback),
+        });
+        return;
       }
+      if (resolved?.kind === 'external') {
+        e.preventDefault();
+        openExternalLink(resolved.url);
+      }
+    };
 
+    const onPreviewDblClick = (e: Event) => {
+      const target = e.target as HTMLElement;
       const img = target.closest('img');
       if (!img?.src) return;
+      e.preventDefault();
+      e.stopPropagation();
       setZoomImage({ src: img.src, alt: img.alt || '预览图片' });
     };
 
     preview.addEventListener('click', onPreviewClick, true);
+    preview.addEventListener('dblclick', onPreviewDblClick, true);
     const imgs = preview.querySelectorAll('img');
     imgs.forEach((img) => {
       img.style.cursor = 'zoom-in';
+      img.title = img.title || '单击调整大小，双击放大查看';
     });
 
-    return () => preview.removeEventListener('click', onPreviewClick, true);
+    return () => {
+      preview.removeEventListener('click', onPreviewClick, true);
+      preview.removeEventListener('dblclick', onPreviewDblClick, true);
+    };
   }, [ready, editorId, value, navigate, location]);
 
   const applyAiMarkdown = (markdown: string) => {
