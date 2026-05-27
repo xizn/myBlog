@@ -130,6 +130,42 @@ html[data-theme-bg-image='1'] .draft-box__title {
   text-shadow: none;
 }
 
+/* 详情页：深色玻璃卡上避免 text-muted 过灰 */
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__read,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__summary,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__meta,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__back {
+  color: #e4e0d8;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content p,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content li,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content ul,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content ol {
+  color: #ddd9d1;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content h2,
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail .markdown-content h3 {
+  color: #f5f4f0;
+}
+
+html[data-theme-bg-image='1'][data-theme-bg-tone='dark'] .learning-detail__search .md-split-editor__search-count {
+  color: #c9c5bd;
+}
+
+html[data-theme-mode='dark'] .learning-detail__read,
+html[data-theme-mode='dark'] .learning-detail__summary,
+html[data-theme-mode='dark'] .learning-detail__meta,
+html[data-theme-mode='dark'] .learning-detail__back {
+  color: #d4d0c8;
+}
+
+html[data-theme-mode='dark'] .learning-detail .markdown-content p,
+html[data-theme-mode='dark'] .learning-detail .markdown-content li {
+  color: #d0ccc4;
+}
+
 html[data-theme-bg-image='1'] .page-header__desc,
 html[data-theme-bg-image='1'] .home-section__more,
 html[data-theme-bg-image='1'] .home-loading,

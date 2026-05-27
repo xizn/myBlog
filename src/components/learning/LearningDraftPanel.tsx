@@ -18,7 +18,6 @@ import {
   type LearningFormValues,
 } from '@/components/form/LearningForm';
 import { FormWorkspace } from '@/components/form/FormWorkspace';
-import { ScrollNavButtons } from '@/components/form/ScrollNavButtons';
 import { useLearningEditorTabs } from '@/contexts/LearningEditorTabsContext';
 import { hasLearningDraftContent } from '@/utils/learningDraftContent';
 import { useEditorReturnTo } from '@/utils/editorReturnTo';
@@ -231,7 +230,6 @@ export function LearningDraftPanel({ draftId, active }: LearningDraftPanelProps)
           onCancel={handleCancel}
         />
       </FormWorkspace>
-      {active && <ScrollNavButtons containerRef={scrollRef} />}
     </div>
   );
 }

@@ -126,6 +126,19 @@ html[data-theme-mode='dark'] .md-split-editor--cherry .cherry-toolbar-button.che
 
 .md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown {
   min-height: 0;
+  cursor: default;
+}
+
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown p,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h1,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h2,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h3,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h4,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h5,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown h6,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown figure,
+.md-split-editor--cherry .cherry .cherry-previewer .cherry-markdown blockquote {
+  cursor: pointer;
 }
 
 html[data-theme-mode='dark'] .md-split-editor--cherry .cherry .cherry-toolbar {

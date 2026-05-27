@@ -73,6 +73,29 @@
   background: none;
 }
 
+.markdown-mermaid {
+  margin: 1rem 0;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
+.markdown-mermaid svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-mermaid--loading {
+  min-height: 4rem;
+}
+
+.markdown-mermaid-fallback {
+  margin: 1rem 0;
+}
+
 .markdown-content__img {
   display: block;
   max-width: 100%;

@@ -21,7 +21,10 @@ assert(loaderSrc.includes('/vendor/cherry-markdown/cherry-markdown.js'), 'cherry
 const modalCss = readFileSync(join(root, 'src/components/form/EditorDraftHistoryModal.css'), 'utf8');
 assert(modalCss.includes('editor-draft-history__panel-inner'), 'history panel inner wrap missing');
 assert(modalCss.includes('right: 0'), 'history should be right drawer');
-assert(modalCss.includes('rgba(28, 25, 23, 0.42)'), 'history backdrop should be semi-transparent');
+assert(
+  modalCss.includes('rgba(12, 11, 10, 0.28)') || modalCss.includes('rgba(28, 25, 23, 0.42)'),
+  'history backdrop should be semi-transparent'
+);
 assert(modalCss.includes('translateX(100%)'), 'history drawer slide animation missing');
 
 const cherryCss = readFileSync(join(root, 'src/components/form/CherryMarkdownEditor.css'), 'utf8');
@@ -35,9 +38,17 @@ assert(
   'explicit editor-preview scroll sync missing'
 );
 
+const previewPaneSrc = readFileSync(join(root, 'src/utils/cherryPreviewPane.ts'), 'utf8');
+assert(
+  previewPaneSrc.includes('editOnly?.(true)') && !previewPaneSrc.includes('editOnly?.(false)'),
+  'close preview must use editOnly(true), not editOnly(false)'
+);
+
 const editorSrc = readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.tsx'), 'utf8');
 assert(editorSrc.includes('loadCherryMarkdown'), 'MarkdownSplitEditor should use Cherry');
 assert(editorSrc.includes('md-split-editor__search-input'), 'editor search UI missing');
+const onCloseBlock = editorSrc.match(/const onClose = \(\) => \{[\s\S]*?\};/);
+assert(onCloseBlock && !onCloseBlock[0].includes('setCherryPreviewerOpen'), 'previewerClose should not re-invoke setCherryPreviewerOpen');
 assert(
   editorSrc.includes('position: sticky') ||
     readFileSync(join(root, 'src/components/form/MarkdownSplitEditor.css'), 'utf8').includes('position: sticky'),

@@ -4,6 +4,23 @@
 
 ---
 
+## 本仓库分支说明（先看这个）
+
+| 分支 | 用途 | 谁该往这里推 |
+|------|------|----------------|
+| **`main`** | 主线：能稳定跑、可发布的整体版本 | 功能做完、自测通过后，**合并进来**再推 |
+| **`editor-panel`** | 编辑区专用：Markdown / Cherry 编辑器、图片插入等 | 只改 `src/components/form/`、`src/pages/*EditorWorkspace*`、`src/utils/cherry*` 等编辑相关时 |
+| **`AIBlog_add_picture`** | 图片相关功能线（历史分支，可与 editor 并行） | 仅在做图片专题时使用 |
+
+**推送规则（记住三条）**
+
+1. **推的是「当前所在分支」**，不是永远推 `main`。左下角显示 `editor-panel` 时，点同步 → 更新的是 GitHub 上的 `editor-panel`。
+2. **第一次推新分支** 要带 `-u`（VS Code 里选「发布分支」会自动做）：  
+   `git push -u origin 分支名`
+3. **`main` 上的代码** 应来自「合并」，不要长期在 `main` 上直接改编辑区实验性功能；在 `editor-panel` 开发 → 合并到 `main` → 再推 `main`。
+
+---
+
 ## 1. 登录 GitHub
 
 1. 浏览器打开 [https://github.com](https://github.com) 并登录账号 `xizn`。
@@ -17,22 +34,21 @@
 
 ## 2. 本地配置远程（只需一次）
 
-在 PowerShell 中：
-
 ```powershell
 cd D:\study_file\myBlog
-
 git remote set-url origin https://github.com/xizn/myBlog.git
 ```
 
-若访问 GitHub 较慢，可先给 Git 配置代理（端口按你的 Clash 等软件修改）：
+访问 GitHub 不稳定时，给 **Git** 配代理（端口改成 Clash 里的 HTTP 端口）：
 
 ```powershell
 git config --global http.proxy http://127.0.0.1:7890
 git config --global https.proxy http://127.0.0.1:7890
 ```
 
-不用代理时取消：
+改完后 **完全退出并重启 VS Code / Cursor**，推送按钮才会稳定。
+
+不用代理时：
 
 ```powershell
 git config --global --unset http.proxy
@@ -41,92 +57,143 @@ git config --global --unset https.proxy
 
 ---
 
-## 3. 提交并推送
+## 3. 日常提交并推送（当前分支）
 
 ```powershell
 cd D:\study_file\myBlog
-
 git add .
 git commit -m "说明本次改了什么"
-git push -u origin main
+git push
 ```
 
-弹出登录框时：
+若提示没有上游分支：`git push -u origin 当前分支名`
 
-| 项 | 填写 |
-|----|------|
-| Username | `xizn` |
-| Password | 填上一步的 **Token**（不是 GitHub 密码） |
-
-Windows 会记住凭据，之后一般不用再输。
+登录框：**Username** = `xizn`，**Password** = **Token**。
 
 ---
 
-## 4. 确认成功
+## 4. 在 VS Code / Cursor 里：创建分支 → 开发 → 合并到 main
 
-浏览器打开 [https://github.com/xizn/myBlog](https://github.com/xizn/myBlog)，能看到最新文件和提交记录即成功。
+### 4.1 创建并切换到 `editor-panel`（编辑区专用）
 
-本地查看状态：
+**图形界面：**
+
+1. 点左下角分支名（可能显示 `main` 或别的名字）。
+2. 选 **创建新分支…**。
+3. 输入：`editor-panel`，回车。
+4. 若本地还没有该分支，会从当前提交分出去；本仓库已在 GitHub 存在 `editor-panel`，也可选 **切换到…** → 输入 `editor-panel`。
+
+**命令行：**
+
+```powershell
+cd D:\study_file\myBlog
+git fetch origin
+git checkout editor-panel
+# 若本地没有：git checkout -b editor-panel origin/editor-panel
+```
+
+确认左下角显示 **`editor-panel`** 再改编辑区代码。
+
+### 4.2 在分支上改代码并推送到 GitHub
+
+1. 改文件（编辑区相关）。
+2. 左侧 **源代码管理** → 文件旁 **+** 暂存。
+3. 输入提交说明 → 点 **✓ 提交**。
+4. 点 **同步更改** 或 **发布分支 / 推送**。
+
+成功：GitHub 上 `editor-panel` 分支有新提交，**`main` 暂时不会变**。
+
+### 4.3 合并进主线 `main`
+
+**方式 A：VS Code（推荐）**
+
+1. 左下角切换到 **`main`**（创建分支… 旁选 **main**）。
+2. 命令面板 `Ctrl+Shift+P` → 输入 **Git: Merge Branch…**。
+3. 选择要合并进来的分支，例如 **`editor-panel`**。
+4. 若有冲突，在源代码管理里逐个解决 → 暂存 → 提交合并。
+5. 仍在 `main` 上点 **同步更改**，把合并后的 `main` 推到 GitHub。
+
+**方式 B：命令行**
+
+```powershell
+git checkout main
+git pull origin main
+git merge editor-panel
+# 有冲突则改文件后：git add . && git commit
+git push origin main
+```
+
+**方式 C：GitHub 网页 Pull Request**
+
+1. 打开 [Compare & pull request](https://github.com/xizn/myBlog/compare/main...editor-panel)。
+2. 创建 PR：`editor-panel` → `main`，审查后 **Merge**。
+3. 本地再执行：`git checkout main` → `git pull origin main`。
+
+### 4.4 合并后让编辑分支跟上 main（可选）
+
+在 `editor-panel` 上继续开发前：
+
+```powershell
+git checkout editor-panel
+git merge main
+git push
+```
+
+避免两条线差太远、下次难合并。
+
+---
+
+## 5. 分支 vs 主线：推送对照表 
+
+| 你人在哪条分支 | 点「同步/推送」后 GitHub 上谁变 | 会不会动 main |
+|----------------|----------------------------------|---------------|
+| `editor-panel` | 只更新 `editor-panel` | 否 |
+| `main`         | 只更新 `main` | 是 |
+| `main` 且刚 merge 完 `editor-panel` | `main` 含编辑区改动 | 是（这是正确发布方式） |
+
+| 场景 | 该怎么做 |
+|------|----------|
+| 只做了编辑区实验，还不确定 | 待在 `editor-panel`，只 `git push` |
+| 编辑区测好了，要给正式版用 | 合并到 `main`，再推 `main` |
+| 推送失败 `Connection was reset` | 开 Clash + 配置 `http.proxy`，重启 VS Code 再推 |
+| 第一次创建本地新分支 | 推送时选「发布分支」，或 `git push -u origin 分支名` |
+
+---
+
+## 6. 确认成功
+
+- 编辑区分支：[github.com/xizn/myBlog/tree/editor-panel](https://github.com/xizn/myBlog/tree/editor-panel)
+- 主线：[github.com/xizn/myBlog/tree/main](https://github.com/xizn/myBlog/tree/main)
 
 ```powershell
 git status
-git log -1 --oneline
+git branch -vv
 ```
 
 ---
 
-## 常见问题
+## 7. 常见问题
 
 | 报错 | 处理 |
 |------|------|
-| `Could not connect to github.com port 443` | 开代理/VPN，或配置 `http.proxy`（见第 2 节） |
-| `Authentication failed` | 用 Token 当密码；确认 Token 未过期且勾选 `repo` |
-| `rejected (non-fast-forward)` | 先 `git pull origin main`，解决冲突后再 `git push` |
-| `both added: README.md` 等冲突 | 改好冲突文件 → `git add .` → `git commit` → `git push` |
+| `Could not connect` / `Connection was reset` | 代理 + 重启 VS Code（见第 2 节） |
+| `Authentication failed` | 用 Token 当密码 |
+| `rejected (non-fast-forward)` | 先 `git pull`，解决冲突再 `git push` |
+| 推上去了但 main 没变 | 正常：你在 feature 分支上推的，要合并才进 main |
+| `both added` 冲突 | 改文件去掉 `<<<<<<<` 标记 → `git add .` → `git commit` |
 
 ---
 
-## 5. Cursor / VS Code 里右键提交记录是干什么的？
+## 8. 右键提交记录菜单（简要）
 
-在左侧 **源代码管理** 或 **时间线 / Git 历史** 里，对某一条提交记录右键，会出现一串菜单。可以把它想成：**对「某一次保存快照」能做什么操作**。
+| 菜单 | 干什么 |
+|------|--------|
+| **打开更改** | 看这次提交改了什么 |
+| **在 GitHub 上打开** | 浏览器看同一次提交 |
+| **创建分支…** | 从这次提交新开一条线 |
+| **与远程比较** | 本地和 GitHub 差多少 |
 
-下面按你截图里的顺序说明（日常用得多的会标 ⭐）。
-
-| 菜单项 | 通俗解释 | 什么时候用 |
-|--------|----------|------------|
-| **打开更改** ⭐ | 看这次提交**具体改了哪些文件、每一行怎么变**（左右对比 diff）。 | 想搞清楚「这次 commit 到底动了什么」。 |
-| **在 GitHub 上打开** ⭐ | 用浏览器打开 GitHub 上**同一次提交**的页面。 | 想分享链接，或在网页上看评论、CI 状态。 |
-| **签出（已分离）** | 把项目**临时切到**这一次提交时的代码状态（不在任何分支上，叫 detached HEAD）。 | 只想**看看旧版本**，一般不在这里继续开发；看完应切回 `main`。 |
-| **创建分支…** | 从这一次提交**新开一条线**（分支），以后在这条线上改代码。 | 想基于某个旧版本做实验，又不想影响 `main`。 |
-| **创建标记…** | 给这次提交贴一个**固定名字**（如 `v1.0.0`），方便以后找到「发版那一版」。 | 正式发布、打版本号时用。 |
-| **挑拣** | 把**这一次提交里的改动**，单独「摘」到当前分支上（不拉整条历史）。 | 别的分支有一个好 fix，只想挪到 `main`，且你很熟悉 Git 时再用。 |
-| **与远程比较** ⭐ | 对比：**你本地的这次提交** 和 **GitHub 上对应位置** 差多少。 | 推送前后检查「本地和网上是不是一致」。 |
-| **与合并基础比较** | 对比两个分支**分叉之前共同祖先**和当前提交的差异（合并时用）。 | 处理复杂合并时才有用；平时常是灰色不可用。 |
-| **相较于…** | 自己选**另一条提交或分支**，和当前这条做对比。 | 想比「昨天那版」和「今天这版」差别。 |
-| **复制提交哈希** | 复制这一笔提交的 **ID**（一长串字母数字，如 `ddf8d35…`）。 | 查 bug、写文档、让别人精确定位某次提交时用。 |
-| **复制提交消息** | 只复制提交说明文字（commit message）。 | 写 changelog、汇报工作时复制描述。 |
-| **添加到聊天** | 把这次改动的上下文丢进 **Cursor 对话**，让 AI 结合代码聊。 | 想问「这次提交为什么这样改」时用。 |
-| **解释更改** | 让 AI **用白话总结**这次提交改了什么。 | 看不懂 diff、想快速了解变更时用。 |
-
-### 几个概念，一句话记住
-
-- **提交（commit）**：一次「存档」，带说明文字；多条提交排成历史时间线。
-- **分支（branch）**：开发用的「线路」，例如 `main` 是主线路；`创建分支` 是从某次存档分出去新路。
-- **远程（remote / origin）**：GitHub 上的那份仓库；**推送** = 把本地存档同步上去。
-- **签出（checkout）**：切换到某一个存档对应的代码状态；**签出（已分离）** 是临时参观，别长期在上面改代码。
-
-### 新手最常用的 3 个
-
-1. **打开更改** — 看这次改了啥。  
-2. **在 GitHub 上打开** — 在网页确认已传上去。  
-3. **与远程比较** — 确认本地和 GitHub 是否一致。
-
-其余（挑拣、分离签出、合并基础比较等）可以等遇到具体场景再查，不必一次全背。
-
-### 和「上传代码」的关系
-
-日常上传只需要：**改文件 → 源代码管理里点「+」暂存 → 写提交说明 → 同步/推送**。  
-右键提交记录里的功能，多半是**查看历史、对比版本**；不是每次推送都必须点。
+日常开发以 **第 4 节** 为主即可。
 
 ---
 

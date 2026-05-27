@@ -16,6 +16,23 @@ function safeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').trim() || 'export';
 }
 
+async function waitForExportImages(root: HTMLElement): Promise<void> {
+  const imgs = [...root.querySelectorAll('img')];
+  await Promise.all(
+    imgs.map(
+      (img) =>
+        new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve();
+            return;
+          }
+          img.addEventListener('load', () => resolve(), { once: true });
+          img.addEventListener('error', () => resolve(), { once: true });
+        })
+    )
+  );
+}
+
 async function downloadBlob(
   blob: Blob,
   filename: string,
@@ -74,13 +91,14 @@ export async function exportAsPdf(
   ]);
 
   const host = document.createElement('div');
-  host.innerHTML = markdownBlocksToExportHtml(blocks);
+  host.innerHTML = await markdownBlocksToExportHtml(blocks);
   host.setAttribute('aria-hidden', 'true');
   document.body.appendChild(host);
+  await waitForExportImages(host);
 
   try {
     const canvas = await html2canvas(host.firstElementChild as HTMLElement, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,

@@ -2,7 +2,8 @@ import type { CherryInstance } from '@/utils/cherryMarkdownLoader';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 
 type CherryPreviewerPaneApi = {
-  editOnly?: (dealToolbar?: boolean) => void;
+  /** true = 仅编辑（隐藏预览）；false = 仅预览全屏，勿用于「关预览」 */
+  editOnly?: (editOnlyMode?: boolean) => void;
   recoverPreviewer?: (dealToolbar?: boolean) => void;
   isPreviewerHidden?: () => boolean;
   setRealLayout?: (editorPct?: string, previewerPct?: string) => void;
@@ -27,11 +28,13 @@ export function setCherryPreviewerOpen(
   if (!previewer) return;
 
   if (open) {
-    previewer.recoverPreviewer?.(true);
+    if (previewer.isPreviewerHidden?.()) {
+      previewer.recoverPreviewer?.(true);
+    }
     previewer.setRealLayout?.('50%', '50%');
     previewer.syncVirtualLayoutFromReal?.();
-  } else {
-    previewer.editOnly?.(false);
+  } else if (!previewer.isPreviewerHidden?.()) {
+    previewer.editOnly?.(true);
   }
 
   syncCherryPaneHeights(hostId, cherry, open);

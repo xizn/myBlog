@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "desktop": "electron .",
     "pack:win": "electron-builder --win portable",
+    "pack:win:setup": "electron-builder --win nsis",
     "pack:desktop": "powershell -ExecutionPolicy Bypass -File scripts/pack-desktop.ps1",
+    "pack:desktop:setup": "powershell -ExecutionPolicy Bypass -File scripts/pack-desktop.ps1 -Setup",
     "verify:tabs": "node scripts/verify-draft-tabs.mjs",
     "verify:markdown-helpers": "node scripts/verify-markdown-helpers.mjs",
     "sync:cherry": "powershell -ExecutionPolicy Bypass -File scripts/sync-cherry-from-indexdoc.ps1",
@@ -58,6 +60,23 @@
     },
     "portable": {
       "artifactName": "Studio-Blog-${version}-portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
+      "language": "2052",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Studio Blog",
+      "artifactName": "Studio-Blog-${version}-Setup.${ext}",
+      "uninstallDisplayName": "Studio Blog",
+      "deleteAppDataOnUninstall": false
     }
   }
 }
