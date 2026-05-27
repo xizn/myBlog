@@ -1,5 +1,7 @@
 /** 从 public/vendor/cherry-markdown 加载 IndexDoc 同款 Cherry Markdown（源自 indexdoc-editor-main） */
 
+import { patchCherryBuiltinMermaidEngine } from '@/utils/cherryMermaidRenderer';
+
 const CHERRY_CSS = '/vendor/cherry-markdown/cherry-markdown.css';
 const CHERRY_JS = '/vendor/cherry-markdown/cherry-markdown.js';
 
@@ -78,6 +80,7 @@ export function loadCherryMarkdown(): Promise<CherryConstructor> {
     if (!Cherry) {
       throw new Error('Cherry Markdown 未加载，请确认 public/vendor/cherry-markdown 资源存在');
     }
+    patchCherryBuiltinMermaidEngine();
     return Cherry;
   })();
 

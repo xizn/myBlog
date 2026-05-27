@@ -15,8 +15,7 @@ import {
   getCodeMirrorFromHost,
 } from '@/utils/cherryCodeMirror';
 import { bindCherryEditorPreviewScroll } from '@/utils/cherryEditorPreviewSync';
-import { getCherryThemeSettings, isAppDarkTheme, syncCherryTheme } from '@/utils/cherryEditorTheme';
-import { getCherryMermaidRendererConfig } from '@/utils/cherryMermaidRenderer';
+import { getCherryThemeSettings, syncCherryTheme } from '@/utils/cherryEditorTheme';
 import { syncCherryPaneHeights } from '@/utils/cherryPaneLayout';
 import {
   ensureCherryPreviewerClosed,
@@ -34,6 +33,7 @@ import {
   offsetToLineCol,
 } from '@/utils/markdownEditorNav';
 import { openExternalLink } from '@/utils/openExternalLink';
+import { bindCherryPreviewClickToSource } from '@/utils/cherryPreviewClickToSource';
 import './MarkdownSplitEditor.css';
 import './CherryMarkdownEditor.css';
 
@@ -143,7 +143,6 @@ export function MarkdownSplitEditor({
           value,
           locale: 'zh_CN',
           themeSettings: getCherryThemeSettings(),
-          ...getCherryMermaidRendererConfig(isAppDarkTheme()) ?? {},
           callback: {
             beforeImageMounted: (srcProp: string, src: string) => {
               if (typeof src === 'string' && src.startsWith('data:image/')) {
@@ -283,12 +282,18 @@ export function MarkdownSplitEditor({
 
   useEffect(() => {
     if (!ready) return;
+    return bindCherryPreviewClickToSource(editorId, cherryRef.current);
+  }, [ready, editorId, value]);
+
+  useEffect(() => {
+    if (!ready) return;
     const host = document.getElementById(editorId);
     const preview = host?.querySelector('.cherry-previewer');
     if (!preview) return;
 
     const onPreviewClick = (e: Event) => {
       const target = e.target as HTMLElement;
+      if (target.closest('img')) return;
       const anchor = target.closest('a');
       if (!anchor?.href) return;
       const resolved = resolveAppLink(anchor.href);
@@ -306,17 +311,17 @@ export function MarkdownSplitEditor({
       }
     };
 
-    const onPreviewDblClick = (e: Event) => {
+    const onPreviewImgDblClick = (e: Event) => {
       const target = e.target as HTMLElement;
       const img = target.closest('img');
-      if (!img?.src) return;
+      if (!img?.src || target.closest('figure')) return;
       e.preventDefault();
       e.stopPropagation();
       setZoomImage({ src: img.src, alt: img.alt || '预览图片' });
     };
 
-    preview.addEventListener('click', onPreviewClick, true);
-    preview.addEventListener('dblclick', onPreviewDblClick, true);
+    preview.addEventListener('click', onPreviewClick);
+    preview.addEventListener('dblclick', onPreviewImgDblClick);
     const imgs = preview.querySelectorAll('img');
     imgs.forEach((img) => {
       img.style.cursor = 'zoom-in';
@@ -324,8 +329,8 @@ export function MarkdownSplitEditor({
     });
 
     return () => {
-      preview.removeEventListener('click', onPreviewClick, true);
-      preview.removeEventListener('dblclick', onPreviewDblClick, true);
+      preview.removeEventListener('click', onPreviewClick);
+      preview.removeEventListener('dblclick', onPreviewImgDblClick);
     };
   }, [ready, editorId, value, navigate, location]);
 
@@ -382,7 +387,7 @@ export function MarkdownSplitEditor({
     };
     const onClose = () => {
       previewOpenRef.current = false;
-      requestAnimationFrame(() => setCherryPreviewerOpen(editorId, cherry, false));
+      requestAnimationFrame(() => syncCherryPaneHeights(editorId, cherry, false));
     };
 
     cherry.$event.on('previewerOpen', onOpen);

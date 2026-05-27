@@ -4,11 +4,13 @@ import { deleteLearning, updateLearning } from '@/api/learning';
 import { useLearning } from '@/hooks/useLearnings';
 import { FormFlagToggle } from '@/components/form/FormFlagToggle';
 import { MarkdownContent } from '@/components/learning/MarkdownContent';
+import { MarkdownReaderToolbar } from '@/components/learning/MarkdownReaderToolbar';
+import { useMarkdownReaderSearch } from '@/hooks/useMarkdownReaderSearch';
 import { Tag } from '@/components/common/Tag';
 import { Button } from '@/components/common/Button';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { BackToTopButton } from '@/components/common/BackToTopButton';
+import { ReaderScrollFab } from '@/components/learning/ReaderScrollFab';
 import { ExportMenuButton } from '@/components/common/ExportMenuButton';
 import { formatDate } from '@/utils/formatDate';
 import { formatLastRead } from '@/utils/formatLastRead';
@@ -57,6 +59,7 @@ export function LearningDetailPage() {
 
   const returnTo = useEditorReturnTo('/learning');
   const backLinkState = backNavStateForReturn(location.state, returnTo);
+  const readerSearch = useMarkdownReaderSearch(item?.content ?? '');
 
   if (loading) return <p className="page-loading">加载中…</p>;
   if (!item) {
@@ -101,6 +104,19 @@ export function LearningDetailPage() {
         </div>
       </div>
 
+      <div className="learning-detail__search">
+        <MarkdownReaderToolbar
+          searchQuery={readerSearch.searchQuery}
+          searchCaseSensitive={readerSearch.searchCaseSensitive}
+          matchIndex={readerSearch.matchIndex}
+          matchCount={readerSearch.matches.length}
+          onSearchQueryChange={readerSearch.setSearchQuery}
+          onToggleCase={readerSearch.toggleCase}
+          onPrev={() => readerSearch.goToMatch(readerSearch.matchIndex - 1)}
+          onNext={() => readerSearch.goToMatch(readerSearch.matchIndex + 1)}
+        />
+      </div>
+
       <header className="learning-detail__header">
         <p className="learning-detail__read">{formatLastRead(item.lastReadAt)}</p>
         <time className="learning-detail__date">更新于 {formatDate(item.updatedAt)}</time>
@@ -115,7 +131,15 @@ export function LearningDetailPage() {
           </div>
         </div>
       </header>
-      <MarkdownContent content={item.content} />
+      <MarkdownContent
+        content={item.content}
+        search={{
+          searchQuery: readerSearch.searchQuery,
+          searchCaseSensitive: readerSearch.searchCaseSensitive,
+          matchIndex: readerSearch.matchIndex,
+          matches: readerSearch.matches,
+        }}
+      />
 
       <ConfirmDialog
         open={confirmOpen}
@@ -125,7 +149,7 @@ export function LearningDetailPage() {
         onConfirm={handleDelete}
         onCancel={() => setConfirmOpen(false)}
       />
-      <BackToTopButton />
+      <ReaderScrollFab />
     </article>
   );
 }

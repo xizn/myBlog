@@ -1,7 +1,8 @@
-# Build Windows portable exe; optionally copy to InstallDir (default: Desktop)
+# Build Windows desktop app: portable exe or NSIS Setup installer
 param(
     [string]$InstallDir = "",
-    [switch]$NoCopy
+    [switch]$NoCopy,
+    [switch]$Setup
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,17 +20,23 @@ Write-Host ">> Building frontend..." -ForegroundColor Cyan
 npm run build
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-Write-Host ">> Packaging desktop app (first run may download Electron)..." -ForegroundColor Cyan
-npm run pack:win
+if ($Setup) {
+    Write-Host ">> Packaging NSIS Setup installer (first run may download Electron)..." -ForegroundColor Cyan
+    npm run pack:win:setup
+} else {
+    Write-Host ">> Packaging portable exe (first run may download Electron)..." -ForegroundColor Cyan
+    npm run pack:win
+}
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $releaseDir = Join-Path $Root "release"
-$exe = Get-ChildItem -Path $releaseDir -Filter "*.exe" |
+$filter = if ($Setup) { "*Setup*.exe" } else { "*.exe" }
+$exe = Get-ChildItem -Path $releaseDir -Filter $filter |
     Sort-Object LastWriteTime -Descending |
     Select-Object -First 1
 
 if (-not $exe) {
-    Write-Host "No .exe found in: $releaseDir" -ForegroundColor Red
+    Write-Host "No matching exe in: $releaseDir (filter: $filter)" -ForegroundColor Red
     exit 1
 }
 
@@ -52,4 +59,9 @@ Write-Host ""
 Write-Host "Done. Copied to:" -ForegroundColor Green
 Write-Host $dest
 Write-Host ""
-Write-Host "Portable exe: run from any folder, no installer needed." -ForegroundColor Gray
+if ($Setup) {
+    Write-Host "Setup installer: double-click to install (Start menu + optional desktop shortcut)." -ForegroundColor Gray
+    Write-Host "Uninstall via Windows Settings -> Apps -> Studio Blog." -ForegroundColor Gray
+} else {
+    Write-Host "Portable exe: run from any folder, no installer needed." -ForegroundColor Gray
+}

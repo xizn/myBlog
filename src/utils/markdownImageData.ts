@@ -2,6 +2,8 @@
 const CHERRY_ALT_MARK_RE =
   /#(?:center|right|left|float-right|float-left|border|shadow|radius|B|S|R|auto|\d+(?:px|em|pt|pc|in|mm|cm|ex|%)?)/gi;
 
+import { MERMAID_EXPORT_IMAGE_ALT } from '@/utils/exportMermaidRaster';
+
 /** 单行 Markdown 图片（含 data URL） */
 export const MARKDOWN_IMAGE_LINE_RE =
   /^!\[([^\]]*)\]\((data:image\/[a-z0-9+.-]+;base64,[A-Za-z0-9+/=]+)\)\s*$/i;
@@ -78,9 +80,15 @@ export function isCherryPlaceholderImageAlt(alt: string): boolean {
   return !label || /^image$/i.test(label);
 }
 
+/** 导出时由 Mermaid 围栏替换生成的图片（内部 alt，不展示图注） */
+export function isMermaidExportImageAlt(alt: string): boolean {
+  return stripCherryImageAlt(alt) === MERMAID_EXPORT_IMAGE_ALT;
+}
+
 /** 导出用图注：仅保留用户自定义 alt */
 export function exportImageCaption(alt: string): string {
-  return isCherryPlaceholderImageAlt(alt) ? '' : stripCherryImageAlt(alt);
+  if (isMermaidExportImageAlt(alt) || isCherryPlaceholderImageAlt(alt)) return '';
+  return stripCherryImageAlt(alt);
 }
 
 /** 正文中残留的 Cherry alt 碎片（如图片语法后的 image #60%） */
@@ -152,6 +160,42 @@ export function measureDataImageSize(
       finish(width, height);
     };
     img.onerror = () => finish(maxWidth, Math.round(maxWidth * DEFAULT_IMAGE_RATIO));
+    img.src = dataUrl;
+  });
+}
+
+/** Word 流程图：按 PNG 真实比例嵌入，仅缩小不放大（横图/竖图宽度不同） */
+export const DOCX_MERMAID_DIAGRAM_MAX_WIDTH = 520;
+export const DOCX_MERMAID_DIAGRAM_MAX_HEIGHT = 680;
+
+export function measureMermaidDiagramSizeForDocx(
+  dataUrl: string
+): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    if (typeof Image === 'undefined') {
+      resolve({ width: 400, height: 300 });
+      return;
+    }
+    const img = new Image();
+    const finish = (width: number, height: number) => {
+      window.clearTimeout(timer);
+      resolve({ width: Math.max(1, width), height: Math.max(1, height) });
+    };
+    const timer = window.setTimeout(
+      () => finish(400, 300),
+      200
+    );
+    img.onload = () => {
+      const nw = img.naturalWidth || 400;
+      const nh = img.naturalHeight || 300;
+      const scale = Math.min(
+        1,
+        DOCX_MERMAID_DIAGRAM_MAX_WIDTH / nw,
+        DOCX_MERMAID_DIAGRAM_MAX_HEIGHT / nh
+      );
+      finish(Math.round(nw * scale), Math.round(nh * scale));
+    };
+    img.onerror = () => finish(400, 300);
     img.src = dataUrl;
   });
 }

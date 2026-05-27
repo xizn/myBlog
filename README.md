@@ -214,12 +214,24 @@ npm run desktop   # Electron 窗口，需先 build
 ### 打包
 
 ```bash
-npm install          # 首次打包前
-npm run pack:win     # 输出到 release/
-npm run pack:desktop # 打包并复制 exe 到桌面
+npm install               # 首次打包前
+npm run build             # 打包前需先构建前端（脚本会自动执行）
+
+# 便携版：单文件 exe，免安装
+npm run pack:win
+npm run pack:desktop      # 打包并复制到桌面
+
+# 安装版：NSIS Setup，可选安装目录、开始菜单、桌面快捷方式
+npm run pack:win:setup
+npm run pack:desktop:setup   # 打包 Setup 并复制到桌面
 ```
 
-便携版：`Studio-Blog-1.0.0-portable.exe`（名称以构建配置为准），双击即用。
+| 产物 | 命令 | 说明 |
+|------|------|------|
+| `Studio-Blog-1.0.0-portable.exe` | `pack:win` | 便携版，双击即用 |
+| `Studio-Blog-1.0.0-Setup.exe` | `pack:win:setup` | 安装向导，可在「设置 → 应用」中卸载 |
+
+产物目录：`release/`。仅复制到 `release/` 不复制到桌面时：`powershell -File scripts/pack-desktop.ps1 -Setup -NoCopy`
 
 ### Electron 下载失败
 

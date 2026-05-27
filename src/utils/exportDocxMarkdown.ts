@@ -1,9 +1,12 @@
 import type { ExportBlock } from '@/utils/exportRecord';
+import { replaceMermaidFencesWithImages } from '@/utils/exportMermaidRaster';
 import {
   MARKDOWN_IMAGE_INLINE_RE,
   MARKDOWN_IMAGE_LINE_RE,
   exportImageCaption,
+  isMermaidExportImageAlt,
   measureDataImageSizeForExport,
+  measureMermaidDiagramSizeForDocx,
   MAX_DOCX_IMAGE_BYTES,
   parseDataImageUrl,
   stripCherryAltLeakFromText,
@@ -94,8 +97,11 @@ async function imageParagraph(
     });
   }
 
-  const size = await measureDataImageSizeForExport(dataUrl);
   const label = exportImageCaption(alt);
+  const isMermaidDiagram = isMermaidExportImageAlt(alt);
+  const size = isMermaidDiagram
+    ? await measureMermaidDiagramSizeForDocx(dataUrl)
+    : await measureDataImageSizeForExport(dataUrl);
   const children: InstanceType<typeof ImageRun | typeof TextRun>[] = [
     new ImageRun({
       type: parsed.extension,
@@ -181,7 +187,8 @@ export async function markdownBlocksToDocxChildren(
         })
       );
     }
-    for (const line of block.body.split(/\r?\n/)) {
+    const bodyForExport = await replaceMermaidFencesWithImages(block.body);
+    for (const line of bodyForExport.split(/\r?\n/)) {
       const lineParas = await lineToParagraphs(line, Paragraph, TextRun, ImageRun, HeadingLevel);
       children.push(...lineParas);
     }

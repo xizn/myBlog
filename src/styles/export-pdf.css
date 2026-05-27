@@ -75,6 +75,19 @@
   color: #9a7b4a;
 }
 
+.export-pdf-host--rich .cherry-markdown-read figure {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.export-pdf-host--rich .export-diagram-img,
+.export-pdf-host--rich .markdown-content__img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+}
+
 .export-pdf-host--rich .markdown-content__img {
   display: block;
   max-width: 100%;

@@ -1,6 +1,8 @@
 /** 从 Cherry 宿主节点获取 CodeMirror 5 实例 */
 export type CodeMirrorEditor = {
   getValue: () => string;
+  getLine: (line: number) => string;
+  setCursor: (pos: { line: number; ch: number }) => void;
   setSelection: (from: { line: number; ch: number }, to?: { line: number; ch: number }) => void;
   replaceSelection: (text: string, selectAround?: string) => void;
   focus: () => void;

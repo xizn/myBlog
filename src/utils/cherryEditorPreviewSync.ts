@@ -40,6 +40,22 @@ function cancelPreviewerScrollAnimation(previewer: PreviewerWithAnimation | unde
   }
 }
 
+/** 按光标行定位预览（编辑时「所见即所在」） */
+function syncPreviewByCursor(cm: CodeMirrorEditor, previewer: CherryPreviewerSync): void {
+  const cursor = cm.getCursor();
+  const lineNum = cursor.line + 1;
+  const lineHandle = cm.getLineHandle(cursor.line);
+  const lineHeight = lineHandle.height;
+  const lineRect = cm.charCoords({ line: cursor.line, ch: 0 }, 'local');
+  const cursorRect = cm.charCoords(cursor, 'local');
+  const lineTop = lineRect.bottom - lineHeight;
+  const percent =
+    lineHeight > 0 ? Math.max(0, Math.min(1, (cursorRect.top - lineTop) / lineHeight)) : 0;
+
+  previewer.scrollToLineNum(lineNum, percent);
+  previewer.highlightLine?.(lineNum);
+}
+
 /** Cherry 行号联动（与内置 onScroll 算法一致） */
 function syncPreviewByLine(cm: CodeMirrorEditor, previewer: CherryPreviewerSync): void {
   const scroller = cm.getScrollerElement();
@@ -91,7 +107,7 @@ function syncPreviewByRatio(
 
 /**
  * 绑定编辑区 → 预览区滚动联动
- * 主：比例即时同步（真实滚动容器）；备：Cherry 行号同步
+ * 光标移动：按光标行定位；滚动编辑区：按视口顶行定位（Cherry 行号 API）
  */
 export function bindCherryEditorPreviewScroll(
   hostId: string,
@@ -106,24 +122,37 @@ export function bindCherryEditorPreviewScroll(
   const scroller = cm.getScrollerElement();
   let raf = 0;
 
-  const runSync = () => {
+  const runScrollSync = () => {
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(() => {
-      const scrollEl = getCherryPreviewScrollElement(previewRoot);
-      const ratioOk = syncPreviewByRatio(scroller, scrollEl, previewer);
-      if (!ratioOk && previewer) {
-        cancelPreviewerScrollAnimation(previewer);
-        syncPreviewByLine(cm, previewer);
+      if (!previewer) {
+        const scrollEl = getCherryPreviewScrollElement(previewRoot);
+        syncPreviewByRatio(scroller, scrollEl, previewer);
+        return;
       }
+      cancelPreviewerScrollAnimation(previewer);
+      syncPreviewByLine(cm, previewer);
     });
   };
 
-  scroller.addEventListener('scroll', runSync, { passive: true });
-  cm.on('scroll', runSync);
+  const runCursorSync = () => {
+    if (!previewer) return;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      cancelPreviewerScrollAnimation(previewer);
+      syncPreviewByCursor(cm, previewer);
+    });
+  };
+
+  scroller.addEventListener('scroll', runScrollSync, { passive: true });
+  cm.on('scroll', runScrollSync);
+  cm.on('cursorActivity', runCursorSync);
+  runCursorSync();
 
   return () => {
     cancelAnimationFrame(raf);
-    scroller.removeEventListener('scroll', runSync);
-    cm.off('scroll', runSync);
+    scroller.removeEventListener('scroll', runScrollSync);
+    cm.off('scroll', runScrollSync);
+    cm.off('cursorActivity', runCursorSync);
   };
 }

@@ -20,7 +20,6 @@ import {
   type AgentFormValues,
 } from '@/components/form/AgentForm';
 import { FormWorkspace } from '@/components/form/FormWorkspace';
-import { ScrollNavButtons } from '@/components/form/ScrollNavButtons';
 import { useAgentEditorTabs } from '@/contexts/AgentEditorTabsContext';
 
 interface AgentDraftPanelProps {
@@ -229,7 +228,6 @@ export function AgentDraftPanel({ draftId, active }: AgentDraftPanelProps) {
           onCancel={handleCancel}
         />
       </FormWorkspace>
-      {active && <ScrollNavButtons containerRef={scrollRef} />}
     </div>
   );
 }

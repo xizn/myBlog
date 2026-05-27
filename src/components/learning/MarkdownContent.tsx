@@ -1,14 +1,38 @@
-import { useCallback, useRef, type AnchorHTMLAttributes, type MouseEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type AnchorHTMLAttributes,
+  type MouseEvent,
+} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { buildInternalNavState } from '@/utils/editorReturnTo';
+import { CherryMarkdownView } from '@/components/learning/CherryMarkdownView';
 import { MarkdownBody } from '@/components/learning/MarkdownBody';
+import { buildInternalNavState } from '@/utils/editorReturnTo';
 import { internalLinkTo, resolveAppLink } from '@/utils/appLink';
 import { scrollToMarkdownHash } from '@/utils/markdownAnchor';
+import {
+  applySearchHighlights,
+  clearSearchHighlights,
+  scrollToSearchMatch,
+  type TextSearchMatch,
+} from '@/utils/markdownSearchHighlight';
+import { markdownContainsMermaid } from '@/utils/mermaidDetect';
 import { openExternalLink } from '@/utils/openExternalLink';
 import './MarkdownContent.css';
 
+export interface MarkdownContentSearchState {
+  searchQuery: string;
+  searchCaseSensitive: boolean;
+  matchIndex: number;
+  matches: TextSearchMatch[];
+}
+
 interface MarkdownContentProps {
   content: string;
+  search?: MarkdownContentSearchState;
 }
 
 function MarkdownAnchor({
@@ -59,11 +83,13 @@ function MarkdownAnchor({
   );
 }
 
-/** Markdown 正文渲染（标题锚点 + 目录同页跳转） */
-export function MarkdownContent({ content }: MarkdownContentProps) {
+/** Markdown 正文渲染（标题锚点 + Mermaid；检索由详情页工具栏驱动） */
+export function MarkdownContent({ content, search }: MarkdownContentProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const articleRef = useRef<HTMLElement>(null);
+  const useCherryRender = useMemo(() => markdownContainsMermaid(content), [content]);
+  const [cherryReady, setCherryReady] = useState(!useCherryRender);
 
   const navigateInternal = useCallback(
     (to: string) => {
@@ -90,13 +116,41 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
     if (root) scrollToMarkdownHash(root, href);
   }, []);
 
+  useEffect(() => {
+    if (!useCherryRender) setCherryReady(true);
+    else setCherryReady(false);
+  }, [content, useCherryRender]);
+
+  useEffect(() => {
+    const root = articleRef.current;
+    if (!root || !cherryReady || !search) return;
+
+    const { searchQuery, matches, matchIndex } = search;
+    if (!searchQuery.trim() || matches.length === 0) {
+      clearSearchHighlights(root);
+      return;
+    }
+
+    applySearchHighlights(root, matches, matchIndex);
+    scrollToSearchMatch(root, matches, matchIndex);
+    return () => clearSearchHighlights(root);
+  }, [search, cherryReady]);
+
   return (
     <article
       ref={articleRef}
       className="markdown-content"
       onClick={handleArticleClick}
     >
-      <MarkdownBody content={content} renderAnchor={renderAnchor} />
+      {useCherryRender ? (
+        <CherryMarkdownView
+          markdown={content}
+          className="cherry-markdown-read"
+          onReady={() => setCherryReady(true)}
+        />
+      ) : (
+        <MarkdownBody content={content} renderAnchor={renderAnchor} />
+      )}
     </article>
   );
 }

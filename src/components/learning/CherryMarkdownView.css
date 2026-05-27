@@ -1,0 +1,31 @@
+.cherry-markdown-view {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.cherry-markdown-view--loading {
+  min-height: 6rem;
+}
+
+.cherry-markdown-view__error {
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.cherry-markdown-view figure {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.cherry-markdown-view figure svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.cherry-markdown-view img {
+  max-width: 100%;
+  height: auto;
+}
